@@ -456,10 +456,14 @@ function Inventory({ setActive, t, products, purchases, currency }) {
 /* ------------------------------ Purchase entry --------------------------- */
 
 function PurchaseEntry({ setActive, onSave, t, currency }) {
-  const [name, setName] = useState("");
-  const [qty, setQty] = useState("");
-  const [cost, setCost] = useState("");
-  const [vendor, setVendor] = useState("");
+  const [name, setName] = useState(() => JSON.parse(localStorage.getItem("ct_name") || "[]"));
+  const [qty, setQty] = useState(() => JSON.parse(localStorage.getItem("ct_Qty") || "[]"));
+  const [cost, setCost] = useState(() => JSON.parse(localStorage.getItem("ct_cost") || "[]"));
+  const [vendor, setVendor] = useState(() => JSON.parse(localStorage.getItem("ct_vendor") || "[]"));
+useEffect(() => { localStorage.setItem("ct_name", JSON.stringify(name)); }, [name]);
+useEffect(() => { localStorage.setItem("ct_Qty", JSON.stringify(Qty)); }, [Qty]);
+useEffect(() => { localStorage.setItem("ct_cost", JSON.stringify(cost)); }, [cost]);
+useEffect(() => { localStorage.setItem("ct_vendor", JSON.stringify(vendor)); }, [vendor]);
 
   const canSave = name.trim() && Number(qty) > 0 && Number(cost) >= 0 && vendor.trim();
 
@@ -1009,7 +1013,9 @@ export default function App() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-6",
+          model: "claude-3-5-sonnet-20240620",
+           "anthropic-version": "2023-06-01",
+           "dangerouslyAllowBrowser": true,
           max_tokens: 1000,
           messages: [{
             role: "user",
