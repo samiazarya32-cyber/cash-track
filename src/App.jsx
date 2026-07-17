@@ -1,0 +1,1088 @@
+import React, { useState, useEffect } from "react";
+import {
+  Home, PlusCircle, Package, Sparkles, User, ChevronLeft, Minus, Plus,
+  AlertTriangle, CheckCircle2, Info, RefreshCw, Globe, LogOut, Truck, Tag, Lock, Clock,
+  Search, Scissors, ShoppingBag, ShoppingCart, Store, Wine, UtensilsCrossed, BedDouble,
+  Pill, Building2, Factory, Boxes, Video, Laptop, Wallet, ArrowDownCircle, ArrowUpCircle,
+} from "lucide-react";
+import { ResponsiveContainer, BarChart, Bar, XAxis, Cell, Tooltip } from "recharts";
+
+const COLORS = {
+  paper: "#F5F6F2",
+  paperRaised: "#FFFFFF",
+  ink: "#16212C",
+  inkSoft: "#5B6570",
+  line: "#DEE2DA",
+  green: "#1E6F5C",
+  greenSoft: "#E7F1EE",
+  rust: "#A6472A",
+  rustSoft: "#F5E7E2",
+  amberSoft: "#F3ECDD",
+  amber: "#8A6A1F",
+};
+const FONTS = { display: "'Fraunces', serif", body: "'Inter', sans-serif" };
+
+// Drives real personalization, not just a label: itemNoun/example change the
+// wording on Sale/Inventory/Purchase screens, and Personal Finance swaps the
+// entire Record flow to Income/Expense instead of product-based sales.
+const BUSINESS_TYPES = [
+  { id: "saloon", label: "Salon", icon: Scissors, itemNoun: "Service", itemNounPlural: "Services", example: "e.g. Haircut (Men)" },
+  { id: "shops", label: "Shop", icon: ShoppingBag, itemNoun: "Product", itemNounPlural: "Products", example: "e.g. T-Shirt (Medium)" },
+  { id: "supermarket", label: "Supermarket", icon: ShoppingCart, itemNoun: "Product", itemNounPlural: "Products", example: "e.g. Cooking Oil 1L" },
+  { id: "mini_market", label: "Mini Market", icon: Store, itemNoun: "Product", itemNounPlural: "Products", example: "e.g. Bottled Water 1.5L" },
+  { id: "bar", label: "Bar", icon: Wine, itemNoun: "Drink", itemNounPlural: "Drinks", example: "e.g. Bottled Beer" },
+  { id: "restaurant", label: "Restaurant", icon: UtensilsCrossed, itemNoun: "Menu Item", itemNounPlural: "Menu Items", example: "e.g. Grilled Tilapia" },
+  { id: "hotels", label: "Hotel", icon: BedDouble, itemNoun: "Room Type", itemNounPlural: "Room Types", example: "e.g. Deluxe Double Room" },
+  { id: "pharmacies", label: "Pharmacy", icon: Pill, itemNoun: "Medicine", itemNounPlural: "Medicines", example: "e.g. Paracetamol 500mg" },
+  { id: "real_estate", label: "Real Estate", icon: Building2, itemNoun: "Listing", itemNounPlural: "Listings", example: "e.g. 2-Bedroom Apartment" },
+  { id: "manufacturing", label: "Manufacturing", icon: Factory, itemNoun: "Product", itemNounPlural: "Products", example: "e.g. Steel Bracket 10cm" },
+  { id: "wholesale", label: "Wholesale", icon: Boxes, itemNoun: "Product", itemNounPlural: "Products", example: "e.g. Rice 50kg Bag" },
+  { id: "videography", label: "Videography", icon: Video, itemNoun: "Package", itemNounPlural: "Packages", example: "e.g. Wedding Full-Day Package" },
+  { id: "freelancing", label: "Freelancing", icon: Laptop, itemNoun: "Service", itemNounPlural: "Services", example: "e.g. Logo Design" },
+  { id: "online_market", label: "Online Market", icon: Globe, itemNoun: "Product", itemNounPlural: "Products", example: "e.g. Wireless Earbuds" },
+  { id: "personal_finance", label: "Personal Finance", icon: Wallet, itemNoun: "Entry", itemNounPlural: "Entries", example: "", isPersonal: true },
+];
+function getBusinessType(id) {
+  return BUSINESS_TYPES.find((b) => b.id === id) || BUSINESS_TYPES[0];
+}
+
+// New installs start with nothing pre-filled — every owner adds their own
+// products, sales, and purchases. See empty-state UI in each screen below.
+
+const FALLBACK_AUDIT = {
+  healthScore: 78,
+  summary: "Cash flow is healthy overall — revenue is outpacing expenses so far.",
+  findings: [
+    { severity: "good", title: "Revenue trending up", detail: "Revenue has been steady across recent sales." },
+    { severity: "info", title: "Keep recording sales", detail: "More transaction history will sharpen these insights." },
+    { severity: "info", title: "Watch your margins", detail: "Compare cost price to selling price regularly." },
+  ],
+};
+
+// Currency is a user preference (set in Profile), not a hardcoded value —
+// every screen formats money through formatMoney() below.
+const CURRENCIES = {
+  USD: { symbol: "$", label: "US Dollar" },
+  UGX: { symbol: "USh", label: "Ugandan Shilling" },
+  EUR: { symbol: "€", label: "Euro" },
+  KES: { symbol: "KSh", label: "Kenyan Shilling" },
+};
+
+const T = {
+  en: {
+    navToday: "Today", navRecord: "Record", navStock: "Stock", navInsights: "Insights", navProfile: "Profile",
+    todaysRevenue: "Today's Revenue", profit: "Profit", sales: "Sales", itemsSold: "Items Sold",
+    recentSales: "Recent Sales", recordSale: "Record Sale", addPurchase: "Add Purchase",
+    aiAuditTitle: "AI Cash Flow Audit", aiSummary: "AI Summary", analyzing: "Analyzing your transactions…",
+    nothingYet: "Nothing to audit yet", nothingYetBody: "Record a few sales and your first AI cash-flow audit will appear here.",
+    auditsPerWeek: "Limited to 2 audits a week", nextAudit: "Next audit available", demoDayLabel: "day",
+    recordEntry: "Add Entry", todaysBalance: "Today's Balance", income: "Income", expenses: "Expenses", entries: "Entries",
+    chooseBusiness: "What's your business?", searchBusiness: "Search business types…",
+  },
+  ti: {
+    navToday: "ሎሚ", navRecord: "መዝግብ", navStock: "ንብረት", navInsights: "ትንታነ", navProfile: "መገለጺ",
+    todaysRevenue: "ኣታዊ ሎሚ", profit: "ረብሓ", sales: "ሽያጥ", itemsSold: "ዝሽየጡ ኣቕሑ",
+    recentSales: "ናይ ቀረባ ሽያጥ", recordSale: "ሽያጥ መዝግብ", addPurchase: "ንብረት ግዛእ",
+    aiAuditTitle: "ናይ AI ናይ ገንዘብ ፍስሰት መርመራ", aiSummary: "ጽማቕ AI", analyzing: "ግብይታትካ ይምርመር ኣሎ…",
+    nothingYet: "ክምርመር ዝኽእል የለን", nothingYetBody: "ገለ ሽያጥ መዝግብ፣ ቀዳማይ መርመራኻ ኣብዚ ክርአ እዩ።",
+    auditsPerWeek: "ኣብ ሰሙን ክሳብ 2 ግዜ ጥራይ", nextAudit: "ቀጻሊ መርመራ ዝርከበሉ", demoDayLabel: "መዓልቲ",
+    recordEntry: "ምዝገባ ፍጠር", todaysBalance: "ሚዛን ናይ ሎሚ", income: "ኣታዊ", expenses: "ወጻኢታት", entries: "ምዝገባታት",
+    chooseBusiness: "ዓይነት ንግድኻ እንታይ እዩ?", searchBusiness: "ዓይነት ንግዲ ድለ…",
+  },
+  ar: {
+    navToday: "اليوم", navRecord: "تسجيل", navStock: "المخزون", navInsights: "التحليلات", navProfile: "الحساب",
+    todaysRevenue: "إيرادات اليوم", profit: "الربح", sales: "المبيعات", itemsSold: "الأصناف المباعة",
+    recentSales: "أحدث المبيعات", recordSale: "تسجيل عملية بيع", addPurchase: "إضافة مشتريات",
+    aiAuditTitle: "تدقيق التدفق النقدي بالذكاء الاصطناعي", aiSummary: "ملخص الذكاء الاصطناعي", analyzing: "جارٍ تحليل معاملاتك…",
+    nothingYet: "لا يوجد شيء للتدقيق بعد", nothingYetBody: "سجّل بعض المبيعات وسيظهر هنا أول تدقيق للتدفق النقدي.",
+    auditsPerWeek: "بحد أقصى مرتين أسبوعيًا", nextAudit: "التدقيق التالي متاح", demoDayLabel: "اليوم",
+    recordEntry: "إضافة إدخال", todaysBalance: "رصيد اليوم", income: "الدخل", expenses: "المصروفات", entries: "الإدخالات",
+    chooseBusiness: "ما نوع نشاطك التجاري؟", searchBusiness: "ابحث عن نوع النشاط…",
+  },
+  lg: {
+    navToday: "Leero", navRecord: "Wandiika", navStock: "Ebyamaguzi", navInsights: "Okwekebejja", navProfile: "Bayina",
+    todaysRevenue: "Ssente ez'olwaleero", profit: "Amagoba", sales: "Okutunda", itemsSold: "Ebintu Ebitundiddwa",
+    recentSales: "Okutunda Okwakati", recordSale: "Wandiika Okutunda", addPurchase: "Ongeza Ebyaguzibwa",
+    aiAuditTitle: "Okukebera Ssente ne AI", aiSummary: "Ekifunze kya AI", analyzing: "Nkebera emikolo gyo…",
+    nothingYet: "Tewali kya kukebera", nothingYetBody: "Wandiika ebimu ebyatunda, okukebera kwo okusooka kulyoke kulabike wano.",
+    auditsPerWeek: "Emirundi ebiri buli wiiki", nextAudit: "Okukebera okuddako kuliwo", demoDayLabel: "olunaku",
+    recordEntry: "Wandiika Ekintu", todaysBalance: "Emabega w'Olwaleero", income: "Ssente Eziyingidde", expenses: "Enfuna", entries: "Ebiwandiikiddwa",
+    chooseBusiness: "Bizinensi yo ya ngeri ki?", searchBusiness: "Noonya ekika kya bizinensi…",
+  },
+};
+const LANG_LABELS = { en: "English", ti: "ትግርኛ", ar: "العربية", lg: "Luganda" };
+
+function money(n) {
+  return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function formatMoney(n, currencyCode) {
+  const c = CURRENCIES[currencyCode] || CURRENCIES.USD;
+  return `${c.symbol} ${money(n)}`;
+}
+
+/* ---------------------------- Intro screen ---------------------------- */
+
+function Intro({ onDone }) {
+  const [exiting, setExiting] = useState(false);
+  useEffect(() => {
+    const t1 = setTimeout(() => setExiting(true), 2200);
+    const t2 = setTimeout(() => onDone(), 2600);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [onDone]);
+
+  return (
+    <div
+      onClick={() => { setExiting(true); setTimeout(onDone, 350); }}
+      style={{
+        position: "absolute", inset: 0, background: COLORS.ink,
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+        cursor: "pointer", opacity: exiting ? 0 : 1, transition: "opacity 380ms ease",
+        zIndex: 10,
+      }}
+    >
+      <style>{`
+        @keyframes stampIn {
+          0% { transform: scale(0.4) rotate(-18deg); opacity: 0; }
+          60% { transform: scale(1.08) rotate(-6deg); opacity: 1; }
+          100% { transform: scale(1) rotate(-6deg); opacity: 1; }
+        }
+        @keyframes riseIn {
+          0% { transform: translateY(14px); opacity: 0; }
+          100% { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes dotPulse {
+          0%, 100% { opacity: 0.25; } 50% { opacity: 1; }
+        }
+        .cashtrack-stamp { animation: stampIn 900ms cubic-bezier(.2,.8,.2,1) both; }
+        .cashtrack-word { animation: riseIn 500ms ease both; animation-delay: 650ms; }
+        .cashtrack-tag { animation: riseIn 500ms ease both; animation-delay: 950ms; }
+        .cashtrack-dot { animation: dotPulse 1.2s ease infinite; }
+        @media (prefers-reduced-motion: reduce) {
+          .cashtrack-stamp, .cashtrack-word, .cashtrack-tag { animation: none !important; opacity: 1 !important; transform: none !important; }
+          .cashtrack-dot { animation: none !important; opacity: 0.6 !important; }
+        }
+      `}</style>
+
+      <div
+        className="cashtrack-stamp"
+        style={{
+          width: 92, height: 92, borderRadius: "50%",
+          border: `3px solid ${COLORS.green}`, display: "flex", flexDirection: "column",
+          alignItems: "center", justifyContent: "center", transform: "rotate(-6deg)",
+        }}
+      >
+        <span style={{ fontFamily: FONTS.display, fontSize: 34, fontWeight: 600, color: COLORS.green, lineHeight: 1 }}>N</span>
+        <span style={{ fontFamily: FONTS.body, fontSize: 9, fontWeight: 700, color: COLORS.green, letterSpacing: 1 }}>PAID</span>
+      </div>
+
+      <div className="cashtrack-word" style={{ marginTop: 22, fontFamily: FONTS.display, fontSize: 32, fontWeight: 600, color: "#fff", letterSpacing: 0.3 }}>
+        CashTrack
+      </div>
+      <div className="cashtrack-tag" style={{ marginTop: 6, fontFamily: FONTS.body, fontSize: 13, color: "#9AA6AE" }}>
+        Know your cash. Every day.
+      </div>
+
+      <div style={{ position: "absolute", bottom: 34, display: "flex", gap: 6 }}>
+        {[0, 1, 2].map((i) => (
+          <span key={i} className="cashtrack-dot" style={{ width: 5, height: 5, borderRadius: "50%", background: "#9AA6AE", animationDelay: `${i * 0.15}s` }} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------ Shared UI ------------------------------ */
+
+function StampDate() {
+  return (
+    <div style={{ width: 56, height: 56, borderRadius: "50%", border: `2px solid ${COLORS.green}`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", transform: "rotate(-6deg)", flexShrink: 0 }}>
+      <span style={{ fontFamily: FONTS.body, fontSize: 10, fontWeight: 700, color: COLORS.green, letterSpacing: 1 }}>JUL</span>
+      <span style={{ fontFamily: FONTS.display, fontSize: 20, fontWeight: 600, color: COLORS.green, lineHeight: 1 }}>13</span>
+    </div>
+  );
+}
+
+function NavBar({ active, setActive, t, isUnlocked }) {
+  const items = [
+    { key: "dashboard", label: t.navToday, icon: Home },
+    { key: "sale", label: t.navRecord, icon: PlusCircle },
+    { key: "inventory", label: t.navStock, icon: Package },
+    { key: "insights", label: t.navInsights, icon: Sparkles, locked: !isUnlocked },
+    { key: "profile", label: t.navProfile, icon: User },
+  ];
+  return (
+    <div style={{ display: "flex", borderTop: `1px solid ${COLORS.line}`, background: COLORS.paperRaised }}>
+      {items.map(({ key, label, icon: Icon, locked }) => {
+        const isActive = active === key;
+        return (
+          <button key={key} onClick={() => setActive(key)} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "10px 0 12px", background: "transparent", border: "none", cursor: "pointer", color: isActive ? COLORS.green : COLORS.inkSoft, position: "relative" }}>
+            <Icon size={19} strokeWidth={isActive ? 2.4 : 1.8} />
+            {locked && (
+              <Lock size={10} color={COLORS.inkSoft} style={{ position: "absolute", top: 6, left: "50%", marginLeft: 6 }} />
+            )}
+            <span style={{ fontFamily: FONTS.body, fontSize: 10.5, fontWeight: isActive ? 600 : 500 }}>{label}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function ScreenHeader({ title, onBack, right }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "18px 20px 14px", borderBottom: `1px solid ${COLORS.line}` }}>
+      {onBack && (
+        <button onClick={onBack} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: COLORS.ink }}>
+          <ChevronLeft size={22} />
+        </button>
+      )}
+      <span style={{ fontFamily: FONTS.display, fontSize: 20, fontWeight: 600, color: COLORS.ink, flex: 1 }}>{title}</span>
+      {right}
+    </div>
+  );
+}
+
+/* ------------------------------ Dashboard ------------------------------ */
+
+function Dashboard({ setActive, t, products, sales, businessName, currency }) {
+  const lowStock = products.filter((p) => p.stock <= p.threshold);
+  const revenue = sales.reduce((sum, s) => sum + s.total, 0);
+  const profit = sales.reduce((sum, s) => sum + (s.total - s.cost * s.qty), 0);
+  const itemsSold = sales.reduce((sum, s) => sum + s.qty, 0);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <div style={{ padding: "20px 20px 16px", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div>
+          <div style={{ fontFamily: FONTS.body, fontSize: 12, color: COLORS.inkSoft, letterSpacing: 0.5, textTransform: "uppercase" }}>
+            CashTrack{businessName ? ` · ${businessName}` : ""}
+          </div>
+          <div style={{ fontFamily: FONTS.display, fontSize: 15, color: COLORS.ink, marginTop: 2 }}>Monday, July 13</div>
+        </div>
+        <StampDate />
+      </div>
+
+      <div style={{ padding: "4px 20px 0" }}>
+        <div style={{ fontFamily: FONTS.body, fontSize: 12, color: COLORS.inkSoft, textTransform: "uppercase", letterSpacing: 0.5 }}>{t.todaysRevenue}</div>
+        <div style={{ fontFamily: FONTS.display, fontSize: 40, fontWeight: 600, color: COLORS.ink, fontVariantNumeric: "tabular-nums", lineHeight: 1.15 }}>{formatMoney(revenue, currency)}</div>
+        <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
+          {[{ label: t.profit, value: money(profit) }, { label: t.sales, value: String(sales.length) }, { label: t.itemsSold, value: String(itemsSold) }].map((s) => (
+            <div key={s.label} style={{ flex: 1, background: COLORS.paperRaised, border: `1px solid ${COLORS.line}`, borderRadius: 10, padding: "10px 12px" }}>
+              <div style={{ fontFamily: FONTS.body, fontSize: 11, color: COLORS.inkSoft }}>{s.label}</div>
+              <div style={{ fontFamily: FONTS.body, fontSize: 18, fontWeight: 700, color: COLORS.ink, fontVariantNumeric: "tabular-nums" }}>{s.value}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {lowStock.length > 0 && (
+        <button onClick={() => setActive("inventory")} style={{ margin: "16px 20px 0", background: COLORS.rustSoft, border: "none", borderRadius: 10, padding: "12px 14px", display: "flex", alignItems: "center", gap: 10, cursor: "pointer", textAlign: "left" }}>
+          <AlertTriangle size={18} color={COLORS.rust} style={{ flexShrink: 0 }} />
+          <span style={{ fontFamily: FONTS.body, fontSize: 13, color: COLORS.rust, fontWeight: 500 }}>
+            {lowStock.length} items running low — {lowStock.map((p) => p.name).join(", ")}
+          </span>
+        </button>
+      )}
+
+      <div style={{ marginTop: 20, flex: 1, overflowY: "auto", padding: "0 20px" }}>
+        <div style={{ fontFamily: FONTS.body, fontSize: 12, color: COLORS.inkSoft, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>{t.recentSales}</div>
+        {sales.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "30px 10px", color: COLORS.inkSoft }}>
+            <div style={{ fontFamily: FONTS.body, fontSize: 13, marginBottom: 12 }}>No sales recorded yet today.</div>
+            <button onClick={() => setActive("sale")} style={{ background: COLORS.greenSoft, border: "none", borderRadius: 9, padding: "9px 16px", color: COLORS.green, fontFamily: FONTS.body, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+              {t.recordSale}
+            </button>
+          </div>
+        ) : (
+          sales.map((s, i) => (
+            <div key={s.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderTop: i === 0 ? "none" : `1px solid ${COLORS.line}` }}>
+              <div>
+                <div style={{ fontFamily: FONTS.body, fontSize: 14, color: COLORS.ink, fontWeight: 500 }}>{s.name}</div>
+                <div style={{ fontFamily: FONTS.body, fontSize: 12, color: COLORS.inkSoft }}>×{s.qty} · {s.method}</div>
+              </div>
+              <div style={{ fontFamily: FONTS.body, fontSize: 14, color: COLORS.green, fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>+{formatMoney(s.total, currency)}</div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------ Sale entry ------------------------------ */
+
+function SaleEntry({ setActive, t, products, currency, onRecordSale }) {
+  const [productId, setProductId] = useState(products[0]?.id ?? null);
+  const [qty, setQty] = useState(1);
+  const [method, setMethod] = useState("Cash");
+
+  if (products.length === 0) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+        <ScreenHeader title={t.recordSale} onBack={() => setActive("dashboard")} />
+        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: 24, textAlign: "center" }}>
+          <div>
+            <Package size={30} color={COLORS.inkSoft} style={{ marginBottom: 10 }} />
+            <div style={{ fontFamily: FONTS.body, fontSize: 13.5, color: COLORS.ink, fontWeight: 600, marginBottom: 4 }}>No products yet</div>
+            <div style={{ fontFamily: FONTS.body, fontSize: 12.5, color: COLORS.inkSoft, marginBottom: 16 }}>Add your first item in Stock before recording a sale.</div>
+            <button onClick={() => setActive("inventory")} style={{ background: COLORS.green, border: "none", borderRadius: 10, padding: "10px 18px", color: "#fff", fontFamily: FONTS.body, fontSize: 13.5, fontWeight: 600, cursor: "pointer" }}>
+              Go to {t.navStock}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const product = products.find((p) => p.id === productId) || products[0];
+  const total = product.price * qty;
+
+  function handleSubmit() {
+    onRecordSale({ productId: product.id, name: product.name, qty, method, total, cost: product.cost });
+    setActive("dashboard");
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <ScreenHeader title={t.recordSale} onBack={() => setActive("dashboard")} />
+      <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 22, flex: 1 }}>
+        <div>
+          <div style={{ fontFamily: FONTS.body, fontSize: 12, color: COLORS.inkSoft, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>Product</div>
+          <select value={productId} onChange={(e) => setProductId(Number(e.target.value))} style={{ width: "100%", fontFamily: FONTS.body, fontSize: 15, padding: "12px 14px", borderRadius: 10, border: `1px solid ${COLORS.line}`, background: COLORS.paperRaised, color: COLORS.ink, appearance: "none" }}>
+            {products.map((p) => <option key={p.id} value={p.id}>{p.name} — {formatMoney(p.price, currency)}</option>)}
+          </select>
+        </div>
+        <div>
+          <div style={{ fontFamily: FONTS.body, fontSize: 12, color: COLORS.inkSoft, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>Quantity</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <button onClick={() => setQty(Math.max(1, qty - 1))} style={{ width: 40, height: 40, borderRadius: 10, border: `1px solid ${COLORS.line}`, background: COLORS.paperRaised, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><Minus size={16} color={COLORS.ink} /></button>
+            <span style={{ fontFamily: FONTS.display, fontSize: 22, fontWeight: 600, minWidth: 24, textAlign: "center" }}>{qty}</span>
+            <button onClick={() => setQty(qty + 1)} style={{ width: 40, height: 40, borderRadius: 10, border: `1px solid ${COLORS.line}`, background: COLORS.paperRaised, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><Plus size={16} color={COLORS.ink} /></button>
+            <span style={{ fontFamily: FONTS.body, fontSize: 12, color: COLORS.inkSoft, marginLeft: "auto" }}>{product.stock} in stock</span>
+          </div>
+        </div>
+        <div>
+          <div style={{ fontFamily: FONTS.body, fontSize: 12, color: COLORS.inkSoft, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>Payment Method</div>
+          <div style={{ display: "flex", gap: 8 }}>
+            {["Cash", "Mobile Money", "Card"].map((m) => (
+              <button key={m} onClick={() => setMethod(m)} style={{ flex: 1, padding: "10px 6px", borderRadius: 10, border: `1px solid ${method === m ? COLORS.green : COLORS.line}`, background: method === m ? COLORS.greenSoft : COLORS.paperRaised, color: method === m ? COLORS.green : COLORS.inkSoft, fontFamily: FONTS.body, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>{m}</button>
+            ))}
+          </div>
+        </div>
+        <div style={{ marginTop: "auto" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "14px 4px", borderTop: `1px solid ${COLORS.line}` }}>
+            <span style={{ fontFamily: FONTS.body, fontSize: 13, color: COLORS.inkSoft }}>Total</span>
+            <span style={{ fontFamily: FONTS.display, fontSize: 26, fontWeight: 600, color: COLORS.ink, fontVariantNumeric: "tabular-nums" }}>{formatMoney(total, currency)}</span>
+          </div>
+          <button onClick={handleSubmit} style={{ width: "100%", padding: "14px 0", borderRadius: 12, border: "none", background: COLORS.green, color: "#fff", fontFamily: FONTS.body, fontSize: 15, fontWeight: 600, cursor: "pointer" }}>{t.recordSale}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------- Inventory ------------------------------ */
+
+function Inventory({ setActive, t, products, purchases, currency }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <ScreenHeader
+        title={t.navStock}
+        onBack={() => setActive("dashboard")}
+        right={
+          <button
+            onClick={() => setActive("purchase")}
+            style={{ display: "flex", alignItems: "center", gap: 6, background: COLORS.greenSoft, border: "none", borderRadius: 8, padding: "7px 11px", cursor: "pointer" }}
+          >
+            <Plus size={14} color={COLORS.green} />
+            <span style={{ fontFamily: FONTS.body, fontSize: 12.5, fontWeight: 600, color: COLORS.green }}>{t.addPurchase}</span>
+          </button>
+        }
+      />
+      <div style={{ flex: 1, overflowY: "auto", padding: "8px 20px 20px" }}>
+        {products.length === 0 && purchases.length === 0 && (
+          <div style={{ textAlign: "center", padding: "50px 10px", color: COLORS.inkSoft }}>
+            <Package size={30} color={COLORS.inkSoft} style={{ marginBottom: 10 }} />
+            <div style={{ fontFamily: FONTS.body, fontSize: 13.5, color: COLORS.ink, fontWeight: 600, marginBottom: 4 }}>No items yet</div>
+            <div style={{ fontFamily: FONTS.body, fontSize: 12.5, marginBottom: 16 }}>Tap "{t.addPurchase}" above to add your first product.</div>
+          </div>
+        )}
+        {products.map((p, i) => {
+          const low = p.stock <= p.threshold;
+          return (
+            <div key={p.id} style={{ padding: "14px 0", borderTop: i === 0 ? "none" : `1px solid ${COLORS.line}` }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div>
+                  <div style={{ fontFamily: FONTS.body, fontSize: 14, fontWeight: 600, color: COLORS.ink }}>{p.name}</div>
+                  <div style={{ fontFamily: FONTS.body, fontSize: 12, color: COLORS.inkSoft, marginTop: 2 }}>Cost {formatMoney(p.cost, currency)} · Sell {formatMoney(p.price, currency)}</div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 5, background: low ? COLORS.rustSoft : COLORS.greenSoft, borderRadius: 8, padding: "4px 10px" }}>
+                  {low && <AlertTriangle size={12} color={COLORS.rust} />}
+                  <span style={{ fontFamily: FONTS.body, fontSize: 13, fontWeight: 700, color: low ? COLORS.rust : COLORS.green, fontVariantNumeric: "tabular-nums" }}>{p.stock} left</span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+
+        {purchases.length > 0 && (
+          <>
+            <div style={{ fontFamily: FONTS.body, fontSize: 12, color: COLORS.inkSoft, textTransform: "uppercase", letterSpacing: 0.5, margin: "18px 0 8px" }}>
+              Recent Purchases
+            </div>
+            {purchases.map((pu, i) => (
+              <div key={pu.id} style={{ padding: "12px 0", borderTop: i === 0 ? "none" : `1px solid ${COLORS.line}` }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                  <div>
+                    <div style={{ fontFamily: FONTS.body, fontSize: 13.5, fontWeight: 600, color: COLORS.ink }}>{pu.name}</div>
+                    <div style={{ fontFamily: FONTS.body, fontSize: 12, color: COLORS.inkSoft, marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>
+                      <Truck size={11} /> {pu.vendor} · ×{pu.qty} @ {formatMoney(pu.cost, currency)}
+                    </div>
+                  </div>
+                  <div style={{ fontFamily: FONTS.body, fontSize: 13, fontWeight: 600, color: COLORS.inkSoft, fontVariantNumeric: "tabular-nums" }}>
+                    {formatMoney(pu.qty * pu.cost, currency)}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------ Purchase entry --------------------------- */
+
+function PurchaseEntry({ setActive, onSave, t, currency }) {
+  const [name, setName] = useState(() => JSON.parse(localStorage.getItem("ct_name") || "[]"));
+  const [qty, setQty] = useState(() => JSON.parse(localStorage.getItem("ct_Qty") || "[]"));
+  const [cost, setCost] = useState(() => JSON.parse(localStorage.getItem("ct_cost") || "[]"));
+  const [vendor, setVendor] = useState(() => JSON.parse(localStorage.getItem("ct_vendor") || "[]"));
+useEffect(() => { localStorage.setItem("ct_name", JSON.stringify(name)); }, [name]);
+useEffect(() => { localStorage.setItem("ct_Qty", JSON.stringify(Qty)); }, [Qty]);
+useEffect(() => { localStorage.setItem("ct_cost", JSON.stringify(cost)); }, [cost]);
+useEffect(() => { localStorage.setItem("ct_vendor", JSON.stringify(vendor)); }, [vendor]);
+
+  const canSave = name.trim() && Number(qty) > 0 && Number(cost) >= 0 && vendor.trim();
+
+  const inputStyle = {
+    width: "100%", fontFamily: FONTS.body, fontSize: 15, padding: "12px 14px",
+    borderRadius: 10, border: `1px solid ${COLORS.line}`, background: COLORS.paperRaised,
+    color: COLORS.ink, boxSizing: "border-box",
+  };
+  const labelStyle = { fontFamily: FONTS.body, fontSize: 12, color: COLORS.inkSoft, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 };
+
+  function handleSave() {
+    if (!canSave) return;
+    onSave({ name: name.trim(), qty: Number(qty), cost: Number(cost), vendor: vendor.trim() });
+    setActive("inventory");
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <ScreenHeader title={t.addPurchase} onBack={() => setActive("inventory")} />
+      <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 18, flex: 1, overflowY: "auto" }}>
+        <div>
+          <div style={labelStyle}>Item Name / Type</div>
+          <div style={{ position: "relative" }}>
+            <Tag size={15} color={COLORS.inkSoft} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }} />
+            <input
+              type="text"
+              inputMode="text"
+              placeholder="e.g. Cooking Oil 1L"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              style={{ ...inputStyle, paddingLeft: 36 }}
+            />
+          </div>
+        </div>
+
+        <div style={{ display: "flex", gap: 12 }}>
+          <div style={{ flex: 1 }}>
+            <div style={labelStyle}>Quantity</div>
+            <input
+              type="number"
+              inputMode="numeric"
+              min="0"
+              placeholder="0"
+              value={qty}
+              onChange={(e) => setQty(e.target.value)}
+              style={inputStyle}
+            />
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={labelStyle}>Cost / Unit ({(CURRENCIES[currency] || CURRENCIES.USD).symbol})</div>
+            <input
+              type="number"
+              inputMode="decimal"
+              min="0"
+              placeholder="0.00"
+              value={cost}
+              onChange={(e) => setCost(e.target.value)}
+              style={inputStyle}
+            />
+          </div>
+        </div>
+
+        <div>
+          <div style={labelStyle}>Vendor Name</div>
+          <div style={{ position: "relative" }}>
+            <Truck size={15} color={COLORS.inkSoft} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }} />
+            <input
+              type="text"
+              inputMode="text"
+              placeholder="e.g. your supplier's name"
+              value={vendor}
+              onChange={(e) => setVendor(e.target.value)}
+              style={{ ...inputStyle, paddingLeft: 36 }}
+            />
+          </div>
+        </div>
+
+        {name.trim() && Number(qty) > 0 && Number(cost) >= 0 && (
+          <div style={{ background: COLORS.paperRaised, border: `1px solid ${COLORS.line}`, borderRadius: 10, padding: "12px 14px", display: "flex", justifyContent: "space-between" }}>
+            <span style={{ fontFamily: FONTS.body, fontSize: 13, color: COLORS.inkSoft }}>Total Cost</span>
+            <span style={{ fontFamily: FONTS.display, fontSize: 18, fontWeight: 600, color: COLORS.ink, fontVariantNumeric: "tabular-nums" }}>
+              {formatMoney(Number(qty) * Number(cost), currency)}
+            </span>
+          </div>
+        )}
+
+        <div style={{ marginTop: "auto" }}>
+          <button
+            onClick={handleSave}
+            disabled={!canSave}
+            style={{
+              width: "100%", padding: "14px 0", borderRadius: 12, border: "none",
+              background: canSave ? COLORS.green : COLORS.line,
+              color: canSave ? "#fff" : COLORS.inkSoft,
+              fontFamily: FONTS.body, fontSize: 15, fontWeight: 600,
+              cursor: canSave ? "pointer" : "default",
+            }}
+          >
+            {t.addPurchase}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* --------------------------- Insights / AI audit ------------------------- */
+
+function ScoreRing({ score }) {
+  const r = 30, c = 2 * Math.PI * r;
+  const good = score >= 70;
+  const color = good ? COLORS.green : score >= 40 ? COLORS.amber : COLORS.rust;
+  const offset = c - (score / 100) * c;
+  return (
+    <div style={{ position: "relative", width: 76, height: 76, flexShrink: 0 }}>
+      <svg width="76" height="76" style={{ transform: "rotate(-90deg)" }}>
+        <circle cx="38" cy="38" r={r} stroke={COLORS.line} strokeWidth="7" fill="none" />
+        <circle cx="38" cy="38" r={r} stroke={color} strokeWidth="7" fill="none" strokeDasharray={c} strokeDashoffset={offset} strokeLinecap="round" style={{ transition: "stroke-dashoffset 700ms ease" }} />
+      </svg>
+      <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
+        <span style={{ fontFamily: FONTS.display, fontSize: 20, fontWeight: 600, color: COLORS.ink }}>{score}</span>
+      </div>
+    </div>
+  );
+}
+
+const SEVERITY_STYLE = {
+  good: { icon: CheckCircle2, color: COLORS.green, bg: COLORS.greenSoft },
+  warning: { icon: AlertTriangle, color: COLORS.rust, bg: COLORS.rustSoft },
+  info: { icon: Info, color: COLORS.amber, bg: COLORS.amberSoft },
+};
+
+const AUDITS_PER_WEEK = 2;
+const WEEK_LENGTH = 7; // demo days; production would use real calendar days
+
+const LANGUAGE_NAMES = { en: "English", ti: "Tigrinya", ar: "Modern Standard Arabic", lg: "Luganda" };
+
+function Insights({ sales, currency, lang, t, demoDay, auditLog, audit, auditLoading, onRunAudit }) {
+  const hasData = sales.length > 0;
+
+  const byMethod = ["Cash", "Mobile Money", "Card"].map((m) => ({
+    method: m,
+    revenue: sales.filter((s) => s.method === m).reduce((sum, s) => sum + s.total, 0),
+  }));
+
+  // Only count runs within the current 7-day window against the cap.
+  const runsThisWeek = auditLog.filter((d) => demoDay - d < WEEK_LENGTH);
+  const canRunAudit = runsThisWeek.length < AUDITS_PER_WEEK;
+  const nextAvailableDay = runsThisWeek.length > 0 ? Math.min(...runsThisWeek) + WEEK_LENGTH : null;
+
+  useEffect(() => {
+    if (!audit && hasData && canRunAudit) {
+      onRunAudit();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasData]);
+
+  if (!hasData) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+        <ScreenHeader title={t.aiAuditTitle} />
+        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: 24, textAlign: "center" }}>
+          <div>
+            <Sparkles size={30} color={COLORS.inkSoft} style={{ marginBottom: 10 }} />
+            <div style={{ fontFamily: FONTS.body, fontSize: 13.5, color: COLORS.ink, fontWeight: 600, marginBottom: 4 }}>{t.nothingYet}</div>
+            <div style={{ fontFamily: FONTS.body, fontSize: 12.5, color: COLORS.inkSoft, maxWidth: 220 }}>{t.nothingYetBody}</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <ScreenHeader
+        title={t.aiAuditTitle}
+        right={
+          <button
+            onClick={onRunAudit}
+            disabled={auditLoading || !canRunAudit}
+            style={{ background: "none", border: "none", cursor: auditLoading || !canRunAudit ? "default" : "pointer", color: canRunAudit ? COLORS.inkSoft : COLORS.line, display: "flex", alignItems: "center" }}
+          >
+            <RefreshCw size={17} style={{ animation: auditLoading ? "spin 1s linear infinite" : "none" }} />
+          </button>
+        }
+      />
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+
+      <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 20px" }}>
+        {!canRunAudit && (
+          <div style={{ background: COLORS.amberSoft, borderRadius: 10, padding: "10px 12px", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+            <Clock size={14} color={COLORS.amber} style={{ flexShrink: 0 }} />
+            <span style={{ fontFamily: FONTS.body, fontSize: 12, color: COLORS.amber }}>
+              {t.auditsPerWeek} · {t.nextAudit} {nextAvailableDay != null ? `(${t.demoDayLabel} ${nextAvailableDay})` : ""}
+            </span>
+          </div>
+        )}
+
+        <div style={{ fontFamily: FONTS.body, fontSize: 12, color: COLORS.inkSoft, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Revenue by Payment Method</div>
+        <div style={{ background: COLORS.paperRaised, border: `1px solid ${COLORS.line}`, borderRadius: 12, padding: "10px 6px 4px", marginBottom: 20 }}>
+          <ResponsiveContainer width="100%" height={120}>
+            <BarChart data={byMethod} margin={{ top: 4, right: 8, left: 8, bottom: 0 }}>
+              <XAxis dataKey="method" tick={{ fontSize: 11, fontFamily: FONTS.body, fill: COLORS.inkSoft }} axisLine={false} tickLine={false} />
+              <Tooltip formatter={(v) => formatMoney(v, currency)} contentStyle={{ fontFamily: FONTS.body, fontSize: 12, borderRadius: 8, border: `1px solid ${COLORS.line}` }} />
+              <Bar dataKey="revenue" radius={[4, 4, 4, 4]}>
+                {byMethod.map((d, i) => <Cell key={i} fill={COLORS.green} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 14, background: COLORS.paperRaised, border: `1px solid ${COLORS.line}`, borderRadius: 12, padding: 16, marginBottom: 16 }}>
+          {auditLoading && !audit ? (
+            <div style={{ width: 76, height: 76, borderRadius: "50%", border: `7px solid ${COLORS.line}` }} />
+          ) : (
+            <ScoreRing score={audit ? audit.healthScore : 0} />
+          )}
+          <div style={{ flex: 1 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <Sparkles size={13} color={COLORS.green} />
+              <span style={{ fontFamily: FONTS.body, fontSize: 11, fontWeight: 700, color: COLORS.green, letterSpacing: 0.5, textTransform: "uppercase" }}>{t.aiSummary}</span>
+            </div>
+            <div style={{ fontFamily: FONTS.body, fontSize: 13, color: COLORS.ink, marginTop: 4, lineHeight: 1.4 }}>
+              {auditLoading && !audit ? t.analyzing : audit?.summary}
+            </div>
+          </div>
+        </div>
+
+        {audit && (audit.findings || []).map((f, i) => {
+          const s = SEVERITY_STYLE[f.severity] || SEVERITY_STYLE.info;
+          const Icon = s.icon;
+          return (
+            <div key={i} style={{ display: "flex", gap: 12, padding: "12px 0", borderTop: i === 0 ? "none" : `1px solid ${COLORS.line}` }}>
+              <div style={{ width: 30, height: 30, borderRadius: 8, background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <Icon size={15} color={s.color} />
+              </div>
+              <div>
+                <div style={{ fontFamily: FONTS.body, fontSize: 13.5, fontWeight: 600, color: COLORS.ink }}>{f.title}</div>
+                <div style={{ fontFamily: FONTS.body, fontSize: 12.5, color: COLORS.inkSoft, marginTop: 2, lineHeight: 1.4 }}>{f.detail}</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* --------------------------------- Paywall --------------------------------- */
+
+// Premium is billed in UGX via Uganda Mobile Money — that's fixed by the
+// payment rail itself, independent of whatever currency the owner has
+// picked for their own sales/inventory tracking.
+const PREMIUM_PLANS = {
+  monthly: { label: "Monthly", price: 5000 },
+  yearly: { label: "Yearly", price: 50000 },
+};
+
+function Paywall({ access, businessInfo }) {
+  const { paymentStatus, submittedTxId, submitTransactionId } = access;
+  const [plan, setPlan] = useState("yearly");
+  const [txId, setTxId] = useState("");
+  const [error, setError] = useState(null);
+
+  function handleSubmit() {
+    setError(null);
+    const result = submitTransactionId(txId, plan);
+    if (!result.ok) setError(result.error);
+  }
+
+  if (paymentStatus === "pending") {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+        <ScreenHeader title="Unlock Premium" />
+        <div style={{ flex: 1, padding: 24, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
+          <Clock size={30} color={COLORS.amber} style={{ marginBottom: 12 }} />
+          <div style={{ fontFamily: FONTS.display, fontSize: 18, fontWeight: 600, color: COLORS.ink, marginBottom: 8 }}>Verifying your payment</div>
+          <div style={{ fontFamily: FONTS.body, fontSize: 13, color: COLORS.inkSoft, lineHeight: 1.5, marginBottom: 18, maxWidth: 260 }}>
+            Your payment is being verified. It will take 10–30 minutes.
+          </div>
+          <div style={{ background: COLORS.paperRaised, border: `1px solid ${COLORS.line}`, borderRadius: 10, padding: "10px 16px", marginBottom: 20 }}>
+            <div style={{ fontFamily: FONTS.body, fontSize: 10.5, color: COLORS.inkSoft, textTransform: "uppercase", letterSpacing: 0.5 }}>Submitted Transaction ID</div>
+            <div style={{ fontFamily: "monospace", fontSize: 14, fontWeight: 600, color: COLORS.ink }}>{submittedTxId}</div>
+          </div>
+          <div style={{ fontFamily: FONTS.body, fontSize: 11.5, color: COLORS.inkSoft }}>This screen unlocks automatically once approved.</div>
+        </div>
+      </div>
+    );
+  }
+
+  const yearlySavingsPct = Math.round((1 - PREMIUM_PLANS.yearly.price / (PREMIUM_PLANS.monthly.price * 12)) * 100);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <ScreenHeader title="Unlock Premium" />
+      <div style={{ flex: 1, overflowY: "auto", padding: 20 }}>
+        <div style={{ textAlign: "center", marginBottom: 18 }}>
+          <Lock size={26} color={COLORS.green} style={{ marginBottom: 8 }} />
+          <div style={{ fontFamily: FONTS.display, fontSize: 18, fontWeight: 600, color: COLORS.ink }}>Your free trial has ended</div>
+          <div style={{ fontFamily: FONTS.body, fontSize: 13, color: COLORS.inkSoft, marginTop: 4 }}>
+            Send payment via Mobile Money to keep using AI Insights.
+          </div>
+        </div>
+
+        <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+          {Object.entries(PREMIUM_PLANS).map(([key, p]) => (
+            <button
+              key={key}
+              onClick={() => setPlan(key)}
+              style={{
+                flex: 1, position: "relative", padding: "12px 8px", borderRadius: 10,
+                border: `1.5px solid ${plan === key ? COLORS.green : COLORS.line}`,
+                background: plan === key ? COLORS.greenSoft : COLORS.paperRaised,
+                cursor: "pointer", textAlign: "left",
+              }}
+            >
+              {key === "yearly" && (
+                <span style={{ position: "absolute", top: -9, right: 8, background: COLORS.green, color: "#fff", fontFamily: FONTS.body, fontSize: 9.5, fontWeight: 700, padding: "2px 6px", borderRadius: 6 }}>
+                  SAVE {yearlySavingsPct}%
+                </span>
+              )}
+              <div style={{ fontFamily: FONTS.body, fontSize: 12, color: plan === key ? COLORS.green : COLORS.inkSoft, fontWeight: 600 }}>{p.label}</div>
+              <div style={{ fontFamily: FONTS.display, fontSize: 16, fontWeight: 600, color: COLORS.ink, marginTop: 2 }}>
+                UGX {p.price.toLocaleString("en-US")}
+              </div>
+            </button>
+          ))}
+        </div>
+
+        <div style={{ background: COLORS.paperRaised, border: `1px solid ${COLORS.line}`, borderRadius: 12, padding: 16, marginBottom: 20 }}>
+          {[
+            ["Amount", `UGX ${PREMIUM_PLANS[plan].price.toLocaleString("en-US")} (${PREMIUM_PLANS[plan].label.toLowerCase()})`],
+            ["Network", businessInfo.network],
+            ["Mobile Money Number", businessInfo.mobileMoneyNumber],
+            ["Registered Name", businessInfo.recipientName],
+          ].map(([label, value]) => (
+            <div key={label} style={{ display: "flex", justifyContent: "space-between", padding: "7px 0" }}>
+              <span style={{ fontFamily: FONTS.body, fontSize: 12.5, color: COLORS.inkSoft }}>{label}</span>
+              <span style={{ fontFamily: FONTS.body, fontSize: 12.5, fontWeight: 600, color: COLORS.ink }}>{value}</span>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ fontFamily: FONTS.body, fontSize: 12, color: COLORS.inkSoft, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>Transaction ID</div>
+        <input
+          type="text"
+          placeholder="Paste the TxID from your confirmation SMS"
+          value={txId}
+          onChange={(e) => setTxId(e.target.value)}
+          style={{ width: "100%", boxSizing: "border-box", fontFamily: FONTS.body, fontSize: 14, padding: "12px 14px", borderRadius: 10, border: `1px solid ${COLORS.line}`, background: COLORS.paperRaised, color: COLORS.ink, marginBottom: 8 }}
+        />
+        {error && <div style={{ fontFamily: FONTS.body, fontSize: 12, color: COLORS.rust, marginBottom: 8 }}>{error}</div>}
+
+        <button
+          onClick={handleSubmit}
+          disabled={!txId.trim()}
+          style={{ width: "100%", padding: "13px 0", borderRadius: 12, border: "none", background: txId.trim() ? COLORS.green : COLORS.line, color: txId.trim() ? "#fff" : COLORS.inkSoft, fontFamily: FONTS.body, fontSize: 15, fontWeight: 600, cursor: txId.trim() ? "pointer" : "default" }}
+        >
+          Submit
+        </button>
+        <div style={{ fontFamily: FONTS.body, fontSize: 11.5, color: COLORS.inkSoft, textAlign: "center", marginTop: 14, lineHeight: 1.5 }}>
+          Verification is manual and usually takes 10–30 minutes.
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
+function Profile({ lang, setLang, currency, setCurrency, businessName, setBusinessName, ownerName, setOwnerName, access }) {
+  const initials = ownerName.trim()
+    ? ownerName.trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase()
+    : null;
+
+  const fieldStyle = { width: "100%", boxSizing: "border-box", fontFamily: FONTS.body, fontSize: 14, padding: "9px 10px", borderRadius: 8, border: `1px solid ${COLORS.line}`, background: COLORS.paper, color: COLORS.ink };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <ScreenHeader title="Profile" />
+      <div style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 20 }}>
+          <div style={{ width: 56, height: 56, borderRadius: "50%", background: COLORS.greenSoft, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            {initials ? (
+              <span style={{ fontFamily: FONTS.display, fontSize: 20, fontWeight: 600, color: COLORS.green }}>{initials}</span>
+            ) : (
+              <User size={22} color={COLORS.green} />
+            )}
+          </div>
+          <div style={{ flex: 1 }}>
+            <input
+              type="text"
+              placeholder="Your name"
+              value={ownerName}
+              onChange={(e) => setOwnerName(e.target.value)}
+              style={{ ...fieldStyle, fontFamily: FONTS.display, fontSize: 15, fontWeight: 600, marginBottom: 6, padding: "6px 8px" }}
+            />
+            <input
+              type="text"
+              placeholder="Business name"
+              value={businessName}
+              onChange={(e) => setBusinessName(e.target.value)}
+              style={{ ...fieldStyle, fontSize: 12.5, padding: "6px 8px" }}
+            />
+          </div>
+        </div>
+
+        <div style={{ fontFamily: FONTS.body, fontSize: 12, color: COLORS.inkSoft, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Preferences</div>
+
+        <div style={{ background: COLORS.paperRaised, border: `1px solid ${COLORS.line}`, borderRadius: 12, padding: 16, marginBottom: 14 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+            <Globe size={16} color={COLORS.inkSoft} />
+            <span style={{ fontFamily: FONTS.body, fontSize: 13, fontWeight: 600, color: COLORS.ink }}>Language</span>
+          </div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {Object.keys(LANG_LABELS).map((code) => (
+              <button
+                key={code}
+                onClick={() => setLang(code)}
+                style={{
+                  flex: "1 1 auto", minWidth: 70, padding: "9px 6px", borderRadius: 9,
+                  border: `1px solid ${lang === code ? COLORS.green : COLORS.line}`,
+                  background: lang === code ? COLORS.greenSoft : COLORS.paper,
+                  color: lang === code ? COLORS.green : COLORS.inkSoft,
+                  fontFamily: FONTS.body, fontSize: 13, fontWeight: 600, cursor: "pointer",
+                }}
+              >
+                {LANG_LABELS[code]}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ background: COLORS.paperRaised, border: `1px solid ${COLORS.line}`, borderRadius: 12, padding: 16, marginBottom: 20 }}>
+          <span style={{ fontFamily: FONTS.body, fontSize: 13, fontWeight: 600, color: COLORS.ink, display: "block", marginBottom: 12 }}>Currency</span>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {Object.keys(CURRENCIES).map((code) => (
+              <button
+                key={code}
+                onClick={() => setCurrency(code)}
+                style={{
+                  flex: "1 1 auto", minWidth: 70, padding: "9px 6px", borderRadius: 9,
+                  border: `1px solid ${currency === code ? COLORS.green : COLORS.line}`,
+                  background: currency === code ? COLORS.greenSoft : COLORS.paper,
+                  color: currency === code ? COLORS.green : COLORS.inkSoft,
+                  fontFamily: FONTS.body, fontSize: 13, fontWeight: 600, cursor: "pointer",
+                }}
+              >
+                {code}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ fontFamily: FONTS.body, fontSize: 12, color: COLORS.inkSoft, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Membership</div>
+        <div style={{ background: COLORS.paperRaised, border: `1px solid ${COLORS.line}`, borderRadius: 12, padding: 16, marginBottom: 20 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+            <span style={{ fontFamily: FONTS.body, fontSize: 13, color: COLORS.ink, fontWeight: 500 }}>Status</span>
+            <span style={{ fontFamily: FONTS.body, fontSize: 13, fontWeight: 600, color: access.isUnlocked ? COLORS.green : COLORS.rust }}>
+              {access.paymentStatus === "approved" ? "Premium" : access.isTrialActive ? `Trial · ${access.trialDaysLeft} day${access.trialDaysLeft === 1 ? "" : "s"} left` : "Locked"}
+            </span>
+          </div>
+          <div style={{ fontFamily: FONTS.body, fontSize: 11, color: COLORS.inkSoft, marginBottom: 10 }}>
+            Demo day {access.demoDay} of 3 free trial days
+          </div>
+          <button
+            onClick={access.advanceDemoDay}
+            style={{ width: "100%", padding: "9px 0", borderRadius: 9, border: `1px dashed ${COLORS.line}`, background: "transparent", color: COLORS.inkSoft, fontFamily: FONTS.body, fontSize: 12, cursor: "pointer" }}
+          >
+            ⏩ Simulate next day (demo only)
+          </button>
+        </div>
+
+        <button style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "13px 0", borderRadius: 12, border: `1px solid ${COLORS.line}`, background: COLORS.paperRaised, color: COLORS.inkSoft, fontFamily: FONTS.body, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
+          <LogOut size={16} /> Sign Out
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------- App ----------------------------------- */
+
+export default function App() {
+  const [showIntro, setShowIntro] = useState(true);
+  const [active, setActive] = useState("dashboard");
+  const [lang, setLang] = useState("en");
+  const [currency, setCurrency] = useState("USD");
+  const [businessName, setBusinessName] = useState("");
+  const [ownerName, setOwnerName] = useState("");
+  const [products, setProducts] = useState([]);
+  const [purchases, setPurchases] = useState([]);
+  const [sales, setSales] = useState([]);
+  const t = T[lang];
+  const isRtl = lang === "ar";
+
+  // --- Trial + payment state ---------------------------------------------
+  // This is the in-artifact demo version of usePaymentAccess.js: same
+  // shape (paymentStatus: 'unpaid' | 'pending' | 'approved'), but using
+  // plain React state instead of localStorage, since this preview sandbox
+  // doesn't support browser storage. In your real app, swap this block
+  // for the usePaymentAccess hook, which persists to localStorage/
+  // AsyncStorage as a cache AND checks your backend as the source of
+  // truth — see the comments in that file for why both matter.
+  const TRIAL_DAYS = 3;
+  const [demoDay, setDemoDay] = useState(1);
+  const [paymentStatus, setPaymentStatus] = useState("unpaid"); // 'unpaid' | 'pending' | 'approved'
+  const [submittedTxId, setSubmittedTxId] = useState(null);
+  const [submittedPlan, setSubmittedPlan] = useState(null);
+  const isTrialActive = demoDay <= TRIAL_DAYS;
+  const trialDaysLeft = Math.max(0, TRIAL_DAYS - demoDay + 1);
+  const isUnlocked = isTrialActive || paymentStatus === "approved";
+
+  const access = {
+    isUnlocked,
+    isTrialActive,
+    trialDaysLeft,
+    demoDay,
+    paymentStatus,
+    submittedTxId,
+    submitTransactionId: (txId, plan) => {
+      const trimmed = txId.trim();
+      if (!trimmed) return { ok: false, error: "Please enter your Transaction ID." };
+      setPaymentStatus("pending");
+      setSubmittedTxId(trimmed);
+      setSubmittedPlan(plan);
+      // Production: POST { txId, plan, submittedAt } to your backend here,
+      // e.g. Supabase `payment_verifications` table with status 'pending'.
+      return { ok: true };
+    },
+    advanceDemoDay: () => setDemoDay((d) => d + 1),
+  };
+
+  // --- AI cash-flow audit: capped to 2 runs per rolling 7-day window -----
+  const [audit, setAudit] = useState(null);
+  const [auditLoading, setAuditLoading] = useState(false);
+  const [auditLog, setAuditLog] = useState([]); // demoDay values when an audit ran
+
+  async function runAudit() {
+    const runsThisWeek = auditLog.filter((d) => demoDay - d < 7);
+    if (runsThisWeek.length >= 2) return; // cap reached — button is disabled anyway
+
+    setAuditLoading(true);
+    try {
+      const revenue = sales.reduce((sum, s) => sum + s.total, 0);
+      const profit = sales.reduce((sum, s) => sum + (s.total - s.cost * s.qty), 0);
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-3-5-sonnet-20240620",
+           "anthropic-version": "2023-06-01",
+           "dangerouslyAllowBrowser": true,
+          max_tokens: 1000,
+          messages: [{
+            role: "user",
+            content: `You are a careful small-business financial auditor. Recorded sales: ${JSON.stringify(sales)}. Total revenue ${revenue}, total profit ${profit}. Write your entire response — every string value — in ${LANGUAGE_NAMES[lang]}, in clear, plain, non-technical language a busy shop owner can read in a few seconds. Respond with ONLY raw JSON, no markdown fences, no preamble, exactly this shape: {"healthScore": <integer 0-100>, "summary": "<one short sentence, max 20 words>", "findings": [{"severity": "good"|"warning"|"info", "title": "<max 6 words>", "detail": "<max 20 words>"}] } with exactly 3 findings.`,
+          }],
+        }),
+      });
+      const data = await res.json();
+      const text = (data.content || []).map((b) => b.text || "").join("");
+      const clean = text.replace(/```json|```/g, "").trim();
+      const parsed = JSON.parse(clean);
+      setAudit(parsed);
+    } catch (e) {
+      setAudit(FALLBACK_AUDIT);
+    } finally {
+      setAuditLoading(false);
+      setAuditLog((prev) => [...prev, demoDay]);
+    }
+  }
+
+  function handleAddPurchase({ name, qty, cost, vendor }) {
+    setProducts((prev) => {
+      const match = prev.find((p) => p.name.toLowerCase() === name.toLowerCase());
+      if (match) {
+        return prev.map((p) => (p.id === match.id ? { ...p, stock: p.stock + qty, cost } : p));
+      }
+      const nextId = Math.max(0, ...prev.map((p) => p.id)) + 1;
+      return [...prev, { id: nextId, name, stock: qty, threshold: Math.max(3, Math.round(qty * 0.2)), cost, price: Math.round(cost * 1.4) }];
+    });
+    setPurchases((prev) => [{ id: prev.length + 1, name, qty, cost, vendor }, ...prev]);
+  }
+
+  function handleRecordSale({ productId, name, qty, method, total, cost }) {
+    setSales((prev) => [{ id: prev.length + 1, productId, name, qty, method, total, cost }, ...prev]);
+    setProducts((prev) => prev.map((p) => (p.id === productId ? { ...p, stock: Math.max(0, p.stock - qty) } : p)));
+  }
+
+  return (
+    <div style={{ display: "flex", justifyContent: "center", background: "#EDEEEA", minHeight: "100vh", padding: 24 }}>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap');`}</style>
+      <div
+        dir={isRtl ? "rtl" : "ltr"}
+        style={{ position: "relative", width: 380, height: 720, background: COLORS.paper, borderRadius: 28, overflow: "hidden", boxShadow: "0 20px 50px rgba(20,30,40,0.18)", display: "flex", flexDirection: "column", border: "1px solid #D8DAD3" }}
+      >
+        {showIntro && <Intro onDone={() => setShowIntro(false)} />}
+        <div style={{ flex: 1, overflow: "hidden" }}>
+          {active === "dashboard" && <Dashboard setActive={setActive} t={t} products={products} sales={sales} businessName={businessName} currency={currency} />}
+          {active === "sale" && <SaleEntry setActive={setActive} t={t} products={products} currency={currency} onRecordSale={handleRecordSale} />}
+          {active === "inventory" && <Inventory setActive={setActive} t={t} products={products} purchases={purchases} currency={currency} />}
+          {active === "purchase" && <PurchaseEntry setActive={setActive} onSave={handleAddPurchase} t={t} currency={currency} />}
+          {active === "insights" && (
+            isUnlocked
+              ? <Insights sales={sales} currency={currency} lang={lang} t={t} demoDay={demoDay} auditLog={auditLog} audit={audit} auditLoading={auditLoading} onRunAudit={runAudit} />
+              : <Paywall access={access} businessInfo={{ mobileMoneyNumber: "00256743227053", recipientName: "Yohannes Kiflay Zera", network: "Airtel Money" }} />
+          )}
+          {active === "profile" && (
+            <Profile
+              lang={lang} setLang={setLang}
+              currency={currency} setCurrency={setCurrency}
+              businessName={businessName} setBusinessName={setBusinessName}
+              ownerName={ownerName} setOwnerName={setOwnerName}
+              access={access}
+            />
+          )}
+        </div>
+        {active !== "purchase" && <NavBar active={active} setActive={setActive} t={t} isUnlocked={isUnlocked} />}
+      </div>
+    </div>
+  );
+}
