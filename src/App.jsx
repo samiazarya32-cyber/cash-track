@@ -9,11 +9,11 @@ import {
 const TRANSLATIONS = {
   ti: {
     title: 'ካሽ ትራክ', revenue: 'ኣታዊ', profit: 'ረብሓ', stock: 'ንብረት', 
-    addSale: 'ሽያጭ መዝግብ', addItem: 'ንብረት ወስኽ', itemName: 'ስም ፍርያት',
+    addSale: 'ሽያጥ መዝግብ', addItem: 'ንብረት ወስኽ', itemName: 'ስም ፍርያት',
     price: 'ዋጋ', quantity: 'ብዝሒ', search: 'በዚ ፈልግ...', noData: 'መዝገብ የለን።',
-    buyingPrice: 'ናይ መግዝኢ ዋጋ', sellingPrice: 'ናይ መሸጢ ዋጋ', selectItem: '-- ፍርያት ሕረፅ --',
+    buyingPrice: 'ናይ መግዝኢ ዋጋ', sellingPrice: 'ናይ መሸጢ ዋጋ', selectItem: '-- ፍርያት ምረጽ --',
     paymentTitle: 'ናይ ኣባልነት ክፍሊት', premiumMsg: 'እዛ ኣፕ ንምጥቃም በጃኹም ክፍሊት ፈጽሙ።',
-    txInput: 'Transaction ID የእትው', submitTx: 'መታወቂያ ስደድ', active: 'ንጡፍ',
+    txInput: 'Transaction ID የእትው', submitTx: 'መለለይ ቁጽሪ ስደድ', active: 'ንጡፍ',
     aiBtn: 'ብ AI መርምር', downloadReport: 'ጸብጻብ ኣውርድ', scanBarcode: 'ባርኮድ ስካን ግበር',
     installApp: 'ኣብ ቴሌፎን ጽዓን', history: 'ታሪኽ ጸብጻባት', profile: 'ፕሮፋይል'
   },
