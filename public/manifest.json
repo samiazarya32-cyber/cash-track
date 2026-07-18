@@ -1,0 +1,17 @@
+{
+  "short_name": "CashTrack",
+  "name": "Business Cash Track",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/10543/10543122.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "background_color": "#1E293B",
+  "theme_color": "#1E293B",
+  "display": "standalone",
+  "orientation": "portrait"
+}
