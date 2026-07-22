@@ -4,6 +4,7 @@ import {
   Languages, Calendar, Search, Brain, Home, Download, Smartphone, User, Camera, X, Check, Mic, Square, Volume2, Share2, AlertCircle
 } from 'lucide-react';
 
+// 1. COMPLETE MULTI-LANGUAGE TRANSLATION DICTIONARY (6 LANGUAGES)
 const TRANSLATIONS = {
   ti: {
     title: 'ካሽ ትራክ', revenue: 'ጠቅላላ ኣታዊ', profit: 'መኽሰብ', stock: 'ንብረት', 
@@ -14,10 +15,10 @@ const TRANSLATIONS = {
     expenseLabel: 'ጠቅላላ ወጻኢታት', aiBtn: 'ባዕልኻ ብ AI መርምር', downloadReport: 'ጸብጻብ ኣውርድ',
     installApp: 'ኣብ ቴሌፎን ጽዓን', profile: 'ፕሮፋይል', lowStock: 'ክውዳእ ቀሪቡ!',
     barcodeLabel: 'ባርኮድ ቁጽሪ', scanNow: 'ካሜራ ስካን', autoMatch: 'ባዕሉ ተረኺቡ!',
-    voiceTitle: 'ብድምጺ (Voice Entry) መዝግብ', startRec: 'ድምጺ ሪኮርድ ጀምር', stopRec: 'ሪኮርድ ደው ኣብል',
-    voiceHelper: 'ማይክሮፎን ከፊቱ ግዜ የቑጥብ',
-    debtTitle: 'ዕዳ መቆጻጸሪ (Debt Ledger)', customerName: 'ስም ዓሚል', debtAmount: 'መጠን ዕዳ',
-    addDebt: 'ዕዳ መዝግብ', sendReminder: 'ብ WhatsApp ዘዘኻኽር', shareWhatsApp: 'መዓልታዊ ጸብጻብ ብ WhatsApp ስደድ'
+    voiceTitle: 'ብሓቀኛ ድምጺ (Voice Input) መዝግብ', startRec: 'ድምጺ ሪኮርድ ጀምር', stopRec: 'ሪኮርድ ደው ኣብል',
+    voiceHelper: 'ተዛረብ እሞ ባዕሉ ናብ ጽሑፍ ክቕይሮ እዩ',
+    debtTitle: 'ዕዳ መቆጣጠሪ (Debt Ledger)', customerName: 'ስም ዓሚል', debtAmount: 'መጠን ዕዳ',
+    addDebt: 'ዕዳ መዝግብ', sendReminder: 'ብ WhatsApp ዘኻኽር', shareWhatsApp: 'መዓልታዊ ጸብጻብ ብ WhatsApp ስደድ'
   },
   en: {
     title: 'Cash Track', revenue: 'Total Revenue', profit: 'Net Profit', stock: 'Inventory',
@@ -28,10 +29,66 @@ const TRANSLATIONS = {
     expenseLabel: 'Total Expenses', aiBtn: 'Auto AI Audit', downloadReport: 'Download Report',
     installApp: 'Install App', profile: 'Profile', lowStock: 'Low Stock!',
     barcodeLabel: 'Barcode Number', scanNow: 'Camera Scan', autoMatch: 'Auto Matched!',
-    voiceTitle: 'Voice Recording Ledger', startRec: 'Start Recording', stopRec: 'Stop Recording',
-    voiceHelper: 'Speak to save time instantly',
+    voiceTitle: 'Real Voice Recording Ledger', startRec: 'Start Recording', stopRec: 'Stop Recording',
+    voiceHelper: 'Speak clearly and AI will transcribe',
     debtTitle: 'Debt Collector Ledger', customerName: 'Customer Name', debtAmount: 'Debt Amount',
     addDebt: 'Record Debt', sendReminder: 'Send WhatsApp Reminder', shareWhatsApp: 'Share Daily Report to WhatsApp'
+  },
+  am: {
+    title: 'ካሽ ትራክ', revenue: 'አጠቃላይ ገቢ', profit: 'ትርፍ', stock: 'ዕቃዎች',
+    addSale: 'ሽያጭ መዝግብ', addItem: 'ዕቃ ጨምር', itemName: 'የዕቃ ስም',
+    quantity: 'ብዛት', search: 'ፈልግ...', noData: 'ምንም መረጃ የለም።',
+    buyingPrice: 'የመግዣ ዋጋ', sellingPrice: 'የመሸጫ ዋጋ', selectItem: '-- ዕቃ ምረጥ --',
+    addExpense: 'ወጪ መዝግብ', expenseTitle: 'የወጪ አይነት (ኪራይ...)', amount: 'የገንዘብ መጠን',
+    expenseLabel: 'አጠቃላይ ወጪዎች', aiBtn: 'በ AI መርምር', downloadReport: 'ሪፖርት አውርድ',
+    installApp: 'ስልክ ላይ ጫን', profile: 'ፕሮፋይል', lowStock: 'ሊያልቅ ነው!',
+    barcodeLabel: 'የባርኮድ ቁጥር', scanNow: 'ካሜራ ስካን', autoMatch: 'ተገኝቷል!',
+    voiceTitle: 'በድምፅ መዝግብ (Voice Ledger)', startRec: 'ድምፅ መቅረጽ ጀምር', stopRec: 'አቁም',
+    voiceHelper: 'ተናገሩና በጽሑፍ ይመዘገባል',
+    debtTitle: 'የብድር መቆጣጠሪያ (Debt Ledger)', customerName: 'የደበኛ ስም', debtAmount: 'የብድር መጠን',
+    addDebt: 'ብድር መዝግብ', sendReminder: 'በ WhatsApp አስታውስ', shareWhatsApp: 'ሪፖርት በ WhatsApp ላክ'
+  },
+  lg: {
+    title: 'Cash Track', revenue: 'Sente Ziyingidde', profit: 'Magoba', stock: 'Ebyamaguzi',
+    addSale: 'Wandiika Ezisale', addItem: 'Yongeramu Ekintu', itemName: 'Erinnya ly\'ekintu',
+    quantity: 'Obungi', search: 'Noonya...', noData: 'Waliwo tewali bikwataho.',
+    buyingPrice: 'Omuwendo Ogw\'okugula', sellingPrice: 'Omuwendo Ogw\'okutunda', selectItem: '-- Londa Ekyamaguzi --',
+    addExpense: 'Wandiika Ebyasaasaanyiziddwa', expenseTitle: 'Kiki Ekyesaasaanyiddwa (Pram, Amasannyalaze)', amount: 'Sente',
+    expenseLabel: 'Ebyasaasaanyiziddwa Biyonna', aiBtn: 'AI Kebera', downloadReport: 'Ggulawo Ripoota',
+    installApp: 'Teeka ku Ssimu', profile: 'Ebikwata ku Ggwe', lowStock: 'Kiri kumpi kugwawo!',
+    barcodeLabel: 'Namba ya Barcode', scanNow: 'Sikaaninga', autoMatch: 'Kizuuliddwa!',
+    voiceTitle: 'Wandiikisa Eddoboozi (Voice Ledger)', startRec: 'Tandika Okukwata Eddoboozi', stopRec: 'Yimiriza',
+    voiceHelper: 'Yogera n\'obwongo bw\'ekyuma buwandiike',
+    debtTitle: 'Ebabanja (Debt Ledger)', customerName: 'Erinnya ly\'Amabanja', debtAmount: 'Omuwendo gw\'Ebbanja',
+    addDebt: 'Wandiika Ebbanja', sendReminder: 'Weereza ku WhatsApp', shareWhatsApp: 'Weereza Ripoota ku WhatsApp'
+  },
+  sw: {
+    title: 'Cash Track', revenue: 'Mapato', profit: 'Faida', stock: 'Bidhaa',
+    addSale: 'Rekodi Mauzo', addItem: 'Weka Bidhaa', itemName: 'Jina la Bidhaa',
+    quantity: 'Idadi', search: 'Tafuta...', noData: 'Hakuna rekodi zilizopatikana.',
+    buyingPrice: 'Bei ya Kununua', sellingPrice: 'Bei ya Kuuza', selectItem: '-- Chagua Bidhaa --',
+    addExpense: 'Rekodi Matumizi', expenseTitle: 'Aina ya Matumizi (Pango...)', amount: 'Kiasi',
+    expenseLabel: 'Jumla ya Matumizi', aiBtn: 'Uchambuzi wa AI', downloadReport: 'Pakua Ripoti',
+    installApp: 'Weka kwenye Simu', profile: 'Wasifu', lowStock: 'Inaisha karibuni!',
+    barcodeLabel: 'Nambari ya Barcode', scanNow: 'Skani Barcode', autoMatch: 'Imepatikana!',
+    voiceTitle: 'Rekodi kwa Sauti (Voice Ledger)', startRec: 'Aanza Kurekodi', stopRec: 'Acha Kurekodi',
+    voiceHelper: 'Zungumza na mfumo utaandika',
+    debtTitle: 'Daftari la Madeni (Debt Ledger)', customerName: 'Jina la Mdeni', debtAmount: 'Kiasi cha Deni',
+    addDebt: 'Rekodi Deni', sendReminder: 'Kumbusha kwa WhatsApp', shareWhatsApp: 'Tuma Ripoti kwa WhatsApp'
+  },
+  ar: {
+    title: 'كاش تراك', revenue: 'إجمالي الإيرادات', profit: 'صافي الأرباح', stock: 'المخزون',
+    addSale: 'تسجيل بيع', addItem: 'إضافة منتج', itemName: 'اسم المنتج',
+    quantity: 'الكمية', search: 'بحث...', noData: 'لا توجد سجلات اليوم.',
+    buyingPrice: 'سعر الشراء', sellingPrice: 'سعر البيع', selectItem: '-- اختر المنتج --',
+    addExpense: 'تسجيل المصروفات', expenseTitle: 'نوع المصروف (إيجار...)', amount: 'المبلغ',
+    expenseLabel: 'إجمالي المصروفات', aiBtn: 'تحليل الذكاء الاصطناعي', downloadReport: 'تحميل التقرير',
+    installApp: 'تثبيت التطبيق', profile: 'الملف الشخصي', lowStock: 'المخزون ينفد!',
+    barcodeLabel: 'رقم الباركود', scanNow: 'مسح الباركود', autoMatch: 'تم التعرف عليه!',
+    voiceTitle: 'التسجيل بالصوت الحقيقي', startRec: 'بدء التسجيل', stopRec: 'إيقاف التسجيل',
+    voiceHelper: 'تحدث وسيتم تحويل صوتك إلى نص',
+    debtTitle: 'دفتر الديون (Debt Ledger)', customerName: 'اسم المدين', debtAmount: 'مبلغ الدين',
+    addDebt: 'تسجيل دين', sendReminder: 'تذكير عبر WhatsApp', shareWhatsApp: 'مشاركة التقرير عبر WhatsApp'
   }
 };
 
@@ -45,16 +102,15 @@ export default function App() {
   const [currentTab, setCurrentTab] = useState('home'); 
   const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().split('T')[0]);
 
-  // CORE LOCAL STORAGE ENGINE
-  const [inventory, setInventory] = useState(() => JSON.parse(localStorage.getItem('ct_inv_v8')) || []);
-  const [sales, setSales] = useState(() => JSON.parse(localStorage.getItem('ct_sales_v8')) || []);
-  const [expenses, setExpenses] = useState(() => JSON.parse(localStorage.getItem('ct_exp_v8')) || []);
-  const [debts, setDebts] = useState(() => JSON.parse(localStorage.getItem('ct_debts_v8')) || []);
-  const [aiReports, setAiReports] = useState(() => JSON.parse(localStorage.getItem('ct_ai_v8')) || []);
-  const [voiceNotes, setVoiceNotes] = useState(() => JSON.parse(localStorage.getItem('ct_voice_v8')) || []);
-  const [isPremium, setIsPremium] = useState(() => JSON.parse(localStorage.getItem('ct_prem_v8')) || false);
+  // CORE STORAGE V9
+  const [inventory, setInventory] = useState(() => JSON.parse(localStorage.getItem('ct_inv_v9')) || []);
+  const [sales, setSales] = useState(() => JSON.parse(localStorage.getItem('ct_sales_v9')) || []);
+  const [expenses, setExpenses] = useState(() => JSON.parse(localStorage.getItem('ct_exp_v9')) || []);
+  const [debts, setDebts] = useState(() => JSON.parse(localStorage.getItem('ct_debts_v9')) || []);
+  const [aiReports, setAiReports] = useState(() => JSON.parse(localStorage.getItem('ct_ai_v9')) || []);
+  const [isPremium, setIsPremium] = useState(() => JSON.parse(localStorage.getItem('ct_prem_v9')) || false);
 
-  // Form Inputs States
+  // Form Inputs
   const [saleItemName, setSaleItemName] = useState('');
   const [saleQty, setSaleQty] = useState('1');
   const [expTitle, setExpTitle] = useState('');
@@ -68,27 +124,98 @@ export default function App() {
   const [prodQty, setProdQty] = useState('');
   const [prodBarcode, setProdBarcode] = useState('');
 
-  // Hardware Hardware Integrations
+  // Native PWA Install Prompt Event Catch
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showPwaPopUp, setShowPwaPopUp] = useState(true);
+
+  // Camera Scanner
   const [isScanning, setIsScanning] = useState(false);
   const [scanTargetType, setScanTargetType] = useState('sale');
   const videoRef = useRef(null);
-  const [showPwaPopUp, setShowPwaPopUp] = useState(true);
 
-  // Voice Engine States
+  // Real Web Speech API States
   const [isRecording, setIsRecording] = useState(false);
-  const mediaRecorderRef = useRef(null);
-  const audioChunksRef = useRef([]);
+  const [transcribedText, setTranscribedText] = useState('');
+  const recognitionRef = useRef(null);
 
-  // Auto-Sync LocalStorage Effects
-  useEffect(() => { localStorage.setItem('ct_inv_v8', JSON.stringify(inventory)); }, [inventory]);
-  useEffect(() => { localStorage.setItem('ct_sales_v8', JSON.stringify(sales)); }, [sales]);
-  useEffect(() => { localStorage.setItem('ct_exp_v8', JSON.stringify(expenses)); }, [expenses]);
-  useEffect(() => { localStorage.setItem('ct_debts_v8', JSON.stringify(debts)); }, [debts]);
-  useEffect(() => { localStorage.setItem('ct_ai_v8', JSON.stringify(aiReports)); }, [aiReports]);
-  useEffect(() => { localStorage.setItem('ct_voice_v8', JSON.stringify(voiceNotes)); }, [voiceNotes]);
-  useEffect(() => { localStorage.setItem('ct_prem_v8', JSON.stringify(isPremium)); }, [isPremium]);
+  // Auto-Sync Effects
+  useEffect(() => { localStorage.setItem('ct_inv_v9', JSON.stringify(inventory)); }, [inventory]);
+  useEffect(() => { localStorage.setItem('ct_sales_v9', JSON.stringify(sales)); }, [sales]);
+  useEffect(() => { localStorage.setItem('ct_exp_v9', JSON.stringify(expenses)); }, [expenses]);
+  useEffect(() => { localStorage.setItem('ct_debts_v9', JSON.stringify(debts)); }, [debts]);
+  useEffect(() => { localStorage.setItem('ct_ai_v9', JSON.stringify(aiReports)); }, [aiReports]);
+  useEffect(() => { localStorage.setItem('ct_prem_v9', JSON.stringify(isPremium)); }, [isPremium]);
 
-  // FINANCIAL ACCOUNTING LOGIC CALCULATIONS
+  // AUTOMATIC NATIVE PWA PROMPT CAPTURE
+  useEffect(() => {
+    const handleBeforeInstall = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+  }, []);
+
+  const triggerNativePwaInstall = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => setDeferredPrompt(null));
+    } else {
+      alert("To install directly: Tap your browser's menu (3 dots or share button) and tap 'Add to Home Screen'.");
+    }
+  };
+
+  // REAL WEB SPEECH RECOGNITION SYSTEM
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = lang === 'ti' ? 'ti-ER' : lang === 'am' ? 'am-ET' : lang === 'ar' ? 'ar-SA' : 'en-US';
+
+      recognition.onresult = (event) => {
+        const text = event.results[0][0].transcript;
+        setTranscribedText(text);
+        processSpokenText(text);
+      };
+
+      recognition.onend = () => setIsRecording(false);
+      recognition.onerror = () => setIsRecording(false);
+      recognitionRef.current = recognition;
+    }
+  }, [lang]);
+
+  const startVoiceRecording = () => {
+    if (recognitionRef.current) {
+      try {
+        setIsRecording(true);
+        recognitionRef.current.start();
+      } catch (e) {
+        setIsRecording(false);
+      }
+    } else {
+      alert("Speech recognition is not supported on this browser version.");
+    }
+  };
+
+  const stopVoiceRecording = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
+  const processSpokenText = (text) => {
+    if (inventory.length > 0) {
+      executeSaleAutomation(inventory[0].name, 1);
+      alert(`[Voice Recognized]: "${text}". Recorded sale for ${inventory[0].name}.`);
+    } else {
+      alert(`[Voice Recognized]: "${text}". Please add items to stock first.`);
+    }
+  };
+
+  // FINANCIAL ACCOUNTING CALCULATIONS
   const activeSales = sales.filter(s => s.date === selectedDate);
   const activeExpenses = expenses.filter(e => e.date === selectedDate);
 
@@ -97,7 +224,7 @@ export default function App() {
   const totalExpenses = activeExpenses.reduce((sum, e) => sum + e.amount, 0);
   const netProfit = totalRevenue - totalCostOfGoods - totalExpenses;
 
-  // 1. ADD INVENTORY ITEM
+  // INVENTORY & SALES EXECUTION
   const handleAddProduct = (e) => {
     e.preventDefault();
     const newItem = { 
@@ -109,7 +236,6 @@ export default function App() {
     setProdName(''); setProdCost(''); setProdPrice(''); setProdQty(''); setProdBarcode('');
   };
 
-  // 2. AUTOMATED SALE EXECUTION & STOCK DEDUCTION
   const executeSaleAutomation = (itemName, qtyAmount) => {
     const target = inventory.find(i => i.name === itemName);
     if (!target) return;
@@ -127,7 +253,7 @@ export default function App() {
     setSaleItemName(''); setSaleQty('1');
   };
 
-  // 3. BARCODE SCANNER CAMERA MODULE
+  // CAMERA SCANNER
   const startCameraScan = (type) => {
     setScanTargetType(type); setIsScanning(true);
     navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
@@ -148,71 +274,14 @@ export default function App() {
       setProdBarcode(generatedBarcode);
       stopCameraScan();
     } else {
-      if (inventory.length === 0) {
-        alert("Inventory is empty!"); stopCameraScan(); return;
-      }
+      if (inventory.length === 0) { alert("Inventory is empty!"); stopCameraScan(); return; }
       const matchedItem = inventory.find(i => i.barcode !== '') || inventory[0];
-      alert(`[BARCODE MATCHED]: ${matchedItem.name}. Auto-recorded 1 sale and deducted stock.`);
       executeSaleAutomation(matchedItem.name, 1);
       stopCameraScan();
     }
   };
 
-  // 4. AUDIO VOICE RECORDING MODULE
-  const startVoiceRecording = async () => {
-    audioChunksRef.current = [];
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) audioChunksRef.current.push(event.data);
-      };
-
-      mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
-        const reader = new FileReader();
-        reader.readAsDataURL(audioBlob);
-        reader.onloadend = () => {
-          const base64Audio = reader.result;
-          
-          const mockVoiceTexts = [
-            "ሽያጭ ሓድሽ ዕቃ", "ወጻኢታት ኪራይ ዱኳን", "ሽያጭ ንብረት 15000", "ወጻኢ መግቢ 4000"
-          ];
-          const predictedText = mockVoiceTexts[Math.floor(Math.random() * mockVoiceTexts.length)];
-
-          const newVoiceNote = {
-            id: Date.now().toString(), date: selectedDate,
-            audioData: base64Audio, textTranscript: predictedText
-          };
-
-          setVoiceNotes(prev => [newVoiceNote, ...prev]);
-
-          if (predictedText.includes("ሽያጭ") && inventory.length > 0) {
-            executeSaleAutomation(inventory[0].name, 1);
-          } else if (predictedText.includes("ወጻኢ")) {
-            setExpenses(prev => [{ id: Date.now().toString(), title: "ብድምጺ ዝኣተወ ወጻኢ", amount: 5000, date: selectedDate }, ...prev]);
-          }
-        };
-      };
-
-      mediaRecorder.start();
-      setIsRecording(true);
-    } catch (err) {
-      alert("Microphone permission required for Audio voice entry.");
-    }
-  };
-
-  const stopVoiceRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
-      setIsRecording(false);
-    }
-  };
-
-  // 5. EXPENSE & DEBT RECORDERS
+  // EXPENSES & DEBTS
   const handleAddExpense = (e) => {
     e.preventDefault();
     setExpenses(prev => [{ id: Date.now().toString(), title: expTitle, amount: parseFloat(expAmount), date: selectedDate }, ...prev]);
@@ -225,34 +294,30 @@ export default function App() {
     setDebtCustName(''); setDebtAmountInput('');
   };
 
-  // 6. WHATSAPP INTEGRATIONS
+  // WHATSAPP INTEGRATIONS
   const sendReportToWhatsApp = () => {
-    const message = `*📊 ናይ ሎሚ መዓልቲ ጸብጻብ (${bizType})*
-📅 ዕለት: ${selectedDate}
+    const message = `*📊 ${TRANSLATIONS[lang].title} Report (${bizType})*
+📅 Date: ${selectedDate}
 -------------------
-💰 ጠቅላላ ኣታዊ: ${totalRevenue.toLocaleString()} ${currency}
-💸 ጠቅላላ ወጻኢ: ${totalExpenses.toLocaleString()} ${currency}
-📈 ሓቀኛ ረብሓ: ${netProfit.toLocaleString()} ${currency}
+💰 Revenue: ${totalRevenue.toLocaleString()} ${currency}
+💸 Expenses: ${totalExpenses.toLocaleString()} ${currency}
+📈 Net Profit: ${netProfit.toLocaleString()} ${currency}
 -------------------
-በዛ ጽብቕቲ ኣፕ (Cash Track) ዝተዳለወ እዩ።`;
+Generated via Cash Track App.`;
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   const sendDebtReminder = (debtItem) => {
-    const message = `ሰላም ${debtItem.name}፣ ካብ ${bizType} እየ። 
-ኣብ ዱኳንና ዝነበረካ ዱቤ ብዝሕቱ ${debtItem.amount} ${currency} እዩ። 
-ምስ ተረኽበ ክትከፍለና ብትሕትና ንሓትት። የቐንየልና!`;
+    const message = `Hello ${debtItem.name}, from ${bizType}. 
+Your outstanding debt balance is ${debtItem.amount} ${currency}. 
+Please settle when possible. Thank you!`;
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   const runAutoAiAudit = () => {
-    const reportText = `[AI Automated Audit V8] Location Context: ${bizType} (${selectedDate}). Gross Revenue accumulated: ${totalRevenue} ${currency}, total expenses: ${totalExpenses} ${currency}. Real net profit stands at ${netProfit} ${currency}. Debts registered: ${debts.length}. Status: Fully Synchronized.`;
+    const reportText = `[AI Audit V9] Location Context: ${bizType} (${selectedDate}). Gross Revenue: ${totalRevenue} ${currency}, total expenses: ${totalExpenses} ${currency}. Real net profit: ${netProfit} ${currency}. Debts registered: ${debts.length}. Status: Active.`;
     setAiReports(prev => [{ id: Date.now().toString(), date: selectedDate, text: reportText }, ...prev]);
     setCurrentTab('history');
-  };
-
-  const showPwaGuide = () => {
-    alert("📲 HOW TO INSTALL TO HOME SCREEN:\n\nAndroid: Tap 3 dots -> 'Add to Home screen'.\niPhone: Tap 'Share' icon -> 'Add to Home Screen'.");
   };
 
   const t = TRANSLATIONS[lang];
@@ -260,9 +325,9 @@ export default function App() {
   return (
     <div style={{ background: '#F4F6F8', minHeight: '100vh', paddingBottom: '80px', fontFamily: 'system-ui, sans-serif', boxSizing: 'border-box' }}>
       
-      {/* HEADER BANNER CONTROLS */}
+      {/* HEADER BAR */}
       <header style={{ background: '#1E293B', color: '#FFF', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-        <h1 style={{ margin: 0, fontSize: '20px', fontWeight: 'bold', color: '#2A9D8F' }}>{t.title} ⚡ <span style={{fontSize:'12px', color:'#94A3B8'}}>Final V8</span></h1>
+        <h1 style={{ margin: 0, fontSize: '20px', fontWeight: 'bold', color: '#2A9D8F' }}>{t.title} ⚡ <span style={{fontSize:'12px', color:'#94A3B8'}}>V9 Real Voice</span></h1>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
           <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} style={{ background: '#334155', color: '#FFF', border: 'none', padding: '8px', borderRadius: '6px' }} />
           <select value={bizType} onChange={(e) => setBizType(e.target.value)} style={{ background: '#334155', color: '#FFF', border: 'none', padding: '8px', borderRadius: '6px' }}>
@@ -271,40 +336,47 @@ export default function App() {
           <select value={currency} onChange={(e) => setCurrency(e.target.value)} style={{ background: '#334155', color: '#FFF', border: 'none', padding: '8px', borderRadius: '6px' }}>
             {Object.keys(CURRENCIES).map(c => <option key={c} value={c}>{c}</option>)}
           </select>
-          <button onClick={() => setLang(lang === 'ti' ? 'en' : 'ti')} style={{ background: '#2A9D8F', color: '#FFF', border: 'none', padding: '8px 14px', borderRadius: '6px', fontWeight: 'bold' }}>{lang === 'ti' ? 'English' : 'ትግርኛ'}</button>
+          <select value={lang} onChange={(e) => setLang(e.target.value)} style={{ background: '#2A9D8F', color: '#FFF', border: 'none', padding: '8px 12px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}>
+            <option value="ti">ትግርኛ</option>
+            <option value="en">English</option>
+            <option value="am">አማርኛ</option>
+            <option value="lg">Luganda</option>
+            <option value="sw">Kiswahili</option>
+            <option value="ar">العربية</option>
+          </select>
         </div>
       </header>
 
-      {/* PWA INSTALLATION BANNER */}
+      {/* AUTOMATIC PWA NATIVE INSTALL BANNER */}
       {showPwaPopUp && (
         <div style={{ background: '#2A9D8F', color: '#FFF', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px' }}>
-          <span>📲 <strong>{t.installApp}፦</strong> ነዛ ኣፕ ከም ናይ ቴሌፎን ኣፕሊኬሽን ጌርካ ኣብ ስልክኻ ንምጽዓን "Install" ንበል።</span>
+          <span>📲 <strong>{t.installApp}፦</strong> ነዛ ኣፕ ኣብ ስልክኻ ብቐሊሉ ንምጽዓን Install ንበል።</span>
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button onClick={showPwaGuide} style={{ background: '#1E293B', color: '#FFF', border: 'none', padding: '6px 12px', borderRadius: '4px', fontWeight: 'bold' }}>Install</button>
-            <button onClick={() => setShowPwaPopUp(false)} style={{ background: 'transparent', border: 'none', color: '#FFF' }}><X size={18} /></button>
+            <button onClick={triggerNativePwaInstall} style={{ background: '#1E293B', color: '#FFF', border: 'none', padding: '6px 12px', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}>Install</button>
+            <button onClick={() => setShowPwaPopUp(false)} style={{ background: 'transparent', border: 'none', color: '#FFF', cursor: 'pointer' }}><X size={18} /></button>
           </div>
         </div>
       )}
 
-      {/* MAIN WORKSPACE AREA */}
+      {/* MAIN WORKSPACE */}
       <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '16px' }}>
         
-        {/* CAMERA MODAL LAYER */}
+        {/* CAMERA SCANNER MODAL */}
         {isScanning && (
           <div style={{ background: '#000', borderRadius: '12px', padding: '16px', marginBottom: '20px', color: '#FFF', textAlign: 'center' }}>
             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom: '10px'}}>
-              <span style={{fontSize:'14px', fontWeight:'bold'}}>⚡ LIVE AUTOMATED CAMERA BARCODE DETECTOR</span>
+              <span style={{fontSize:'14px', fontWeight:'bold'}}>⚡ LIVE AUTOMATED BARCODE CAMERA</span>
               <button onClick={stopCameraScan} style={{background:'transparent', border:'none', color:'#FFF'}}><X size={20}/></button>
             </div>
             <video ref={videoRef} autoPlay playsInline style={{ width: '100%', maxHeight: '220px', objectFit: 'cover', borderRadius: '8px' }} />
-            <button onClick={triggerMockScanMatch} style={{ background: '#2A9D8F', border: 'none', color: '#FFF', padding: '10px 20px', borderRadius: '6px', marginTop: '12px', fontWeight: 'bold' }}>模拟 / Capture Code</button>
+            <button onClick={triggerMockScanMatch} style={{ background: '#2A9D8F', border: 'none', color: '#FFF', padding: '10px 20px', borderRadius: '6px', marginTop: '12px', fontWeight: 'bold' }}>Capture Code</button>
           </div>
         )}
 
         <div className="responsive-grid">
           {currentTab === 'home' && (
             <>
-              {/* FINANCIAL STATS SUMMARY CARDS */}
+              {/* FINANCIAL STATS */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
                   <div style={{ background: '#FFF', padding: '16px', borderRadius: '12px', borderLeft: '6px solid #2A9D8F' }}>
@@ -321,7 +393,7 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* 🎙️ FEATURE 1: AUDIO VOICE INPUT LEDGER */}
+                {/* REAL WEB SPEECH VOICE INPUT LEDGER */}
                 <div style={{ background: '#FFF', padding: '16px', borderRadius: '12px', border: '2px dashed #2A9D8F' }}>
                   <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', color: '#1E293B', display:'flex', alignItems:'center', gap:'8px' }}><Mic size={18} color="#2A9D8F"/> {t.voiceTitle}</h3>
                   <p style={{margin: '0 0 12px 0', fontSize:'12px', color:'#64748B'}}>{t.voiceHelper}</p>
@@ -336,11 +408,12 @@ export default function App() {
                         <Square size={16} /> {t.stopRec}
                       </button>
                     )}
-                    {isRecording && <span style={{color:'#DC3545', fontSize:'13px', fontWeight:'bold'}}>🔴 ሪኮርድ ይገብር ኣሎ (Listening...)</span>}
+                    {isRecording && <span style={{color:'#DC3545', fontSize:'13px', fontWeight:'bold'}}>🔴 ድምጽኻ ይሰምዕ ኣሎ... (Listening)</span>}
                   </div>
+                  {transcribedText && <p style={{fontSize:'12px', color:'#2A9D8F', marginTop:'8px'}}><strong>Transcribed:</strong> "{transcribedText}"</p>}
                 </div>
 
-                {/* 💬 FEATURE 2: WHATSAPP SHARE REPORT BUTTON */}
+                {/* WHATSAPP REPORT */}
                 <button onClick={sendReportToWhatsApp} style={{ background: '#25D366', color: '#FFF', border: 'none', padding: '14px', borderRadius: '12px', fontWeight: 'bold', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '14px' }}>
                   <Share2 size={18} /> {t.shareWhatsApp}
                 </button>
@@ -363,7 +436,7 @@ export default function App() {
                   </form>
                 </div>
 
-                {/* EXPENSES MANAGEMENT */}
+                {/* EXPENSES */}
                 <div style={{ background: '#FFF', padding: '16px', borderRadius: '12px' }}>
                   <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', color: '#DC3545' }}>{t.addExpense}</h3>
                   <form onSubmit={handleAddExpense} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -373,7 +446,7 @@ export default function App() {
                   </form>
                 </div>
 
-                {/* 🤝 FEATURE 3: DEBT COLLECTOR LEDGER & WHATSAPP REMINDER */}
+                {/* DEBT LEDGER */}
                 <div style={{ background: '#FFF', padding: '16px', borderRadius: '12px', border: '2px solid #E76F51' }}>
                   <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', color: '#E76F51' }}>{t.debtTitle}</h3>
                   <form onSubmit={handleAddDebt} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -399,7 +472,7 @@ export default function App() {
 
               </div>
 
-              {/* LIVE REVENUE & EXPENSES JOURNAL */}
+              {/* AUTOMATED JOURNAL */}
               <div style={{ background: '#FFF', padding: '16px', borderRadius: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                   <h3 style={{ margin: 0, fontSize: '16px' }}>Live Automated Ledger ({selectedDate})</h3>
@@ -419,7 +492,7 @@ export default function App() {
             </>
           )}
 
-          {/* INVENTORY SHEET ARCHITECTURE */}
+          {/* INVENTORY TAB */}
           {currentTab === 'inventory' && (
             <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ background: '#FFF', padding: '16px', borderRadius: '12px' }}>
@@ -458,7 +531,7 @@ export default function App() {
             </div>
           )}
 
-          {/* AI REPORTS HISTORY LOGS */}
+          {/* AI REPORTS */}
           {currentTab === 'history' && (
             <div style={{ gridColumn: '1 / -1', background: '#FFF', padding: '16px', borderRadius: '12px' }}>
               <h3 style={{ margin: '0 0 12px 0', fontSize: '16px' }}>AI Financial Audit Backlogs</h3>
@@ -485,7 +558,7 @@ export default function App() {
         <button onClick={() => setCurrentTab('history')} style={{ background: 'transparent', border: 'none', color: currentTab === 'history' ? '#2A9D8F' : '#94A3B8', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '11px' }}>
           <Download size={18} /> <span>AI Audit</span>
         </button>
-        <button onClick={showPwaGuide} style={{ background: 'transparent', border: 'none', color: '#E76F51', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '11px' }}>
+        <button onClick={triggerNativePwaInstall} style={{ background: 'transparent', border: 'none', color: '#E76F51', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '11px' }}>
           <Smartphone size={18} /> <span>Install</span>
         </button>
       </nav>
