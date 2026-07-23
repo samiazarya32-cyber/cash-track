@@ -4,7 +4,7 @@ import {
   Languages, Calendar, Search, Brain, Home, Download, Smartphone, User, Camera, X, Check, Mic, Square, Volume2, Share2, AlertCircle
 } from 'lucide-react';
 
-// 1. COMPLETE MULTI-LANGUAGE TRANSLATION DICTIONARY (6 LANGUAGES)
+// MULTI-LANGUAGE TRANSLATION DICTIONARY
 const TRANSLATIONS = {
   ti: {
     title: 'ካሽ ትራክ', revenue: 'ጠቅላላ ኣታዊ', profit: 'መኽሰብ', stock: 'ንብረት', 
@@ -17,8 +17,8 @@ const TRANSLATIONS = {
     barcodeLabel: 'ባርኮድ ቁጽሪ', scanNow: 'ካሜራ ስካን', autoMatch: 'ባዕሉ ተረኺቡ!',
     voiceTitle: 'ብሓቀኛ ድምጺ (Voice Input) መዝግብ', startRec: 'ድምጺ ሪኮርድ ጀምር', stopRec: 'ሪኮርድ ደው ኣብል',
     voiceHelper: 'ተዛረብ እሞ ባዕሉ ናብ ጽሑፍ ክቕይሮ እዩ',
-    debtTitle: 'ዕዳ መቆጣጠሪ (Debt Ledger)', customerName: 'ስም ዓሚል', debtAmount: 'መጠን ዕዳ',
-    addDebt: 'ዕዳ መዝግብ', sendReminder: 'ብ WhatsApp ዘኻኽር', shareWhatsApp: 'መዓልታዊ ጸብጻብ ብ WhatsApp ስደድ'
+    debtTitle: 'ዕዳ መቆጻጸሪ (Debt Ledger)', customerName: 'ስም ዓሚል', debtAmount: 'መጠን ዕዳ',
+    addDebt: 'ዕዳ መዝግብ', sendReminder: 'ብ WhatsApp ዘኻኽር', shareWhatsApp: 'መዓልታዊ ጸብጻብ ብ WhatsApp ስደድ', scanBarcode: 'ባርኮድ ስካን'
   },
   en: {
     title: 'Cash Track', revenue: 'Total Revenue', profit: 'Net Profit', stock: 'Inventory',
@@ -32,7 +32,7 @@ const TRANSLATIONS = {
     voiceTitle: 'Real Voice Recording Ledger', startRec: 'Start Recording', stopRec: 'Stop Recording',
     voiceHelper: 'Speak clearly and AI will transcribe',
     debtTitle: 'Debt Collector Ledger', customerName: 'Customer Name', debtAmount: 'Debt Amount',
-    addDebt: 'Record Debt', sendReminder: 'Send WhatsApp Reminder', shareWhatsApp: 'Share Daily Report to WhatsApp'
+    addDebt: 'Record Debt', sendReminder: 'Send WhatsApp Reminder', shareWhatsApp: 'Share Daily Report to WhatsApp', scanBarcode: 'Scan Barcode'
   },
   am: {
     title: 'ካሽ ትራክ', revenue: 'አጠቃላይ ገቢ', profit: 'ትርፍ', stock: 'ዕቃዎች',
@@ -46,49 +46,49 @@ const TRANSLATIONS = {
     voiceTitle: 'በድምፅ መዝግብ (Voice Ledger)', startRec: 'ድምፅ መቅረጽ ጀምር', stopRec: 'አቁም',
     voiceHelper: 'ተናገሩና በጽሑፍ ይመዘገባል',
     debtTitle: 'የብድር መቆጣጠሪያ (Debt Ledger)', customerName: 'የደበኛ ስም', debtAmount: 'የብድር መጠን',
-    addDebt: 'ብድር መዝግብ', sendReminder: 'በ WhatsApp አስታውስ', shareWhatsApp: 'ሪፖርት በ WhatsApp ላክ'
+    addDebt: 'ብድር መዝግብ', sendReminder: 'በ WhatsApp አስታውስ', shareWhatsApp: 'ሪፖርት በ WhatsApp ላክ', scanBarcode: 'ባርኮድ ስካን'
   },
   lg: {
     title: 'Cash Track', revenue: 'Sente Ziyingidde', profit: 'Magoba', stock: 'Ebyamaguzi',
     addSale: 'Wandiika Ezisale', addItem: 'Yongeramu Ekintu', itemName: 'Erinnya ly\'ekintu',
     quantity: 'Obungi', search: 'Noonya...', noData: 'Waliwo tewali bikwataho.',
     buyingPrice: 'Omuwendo Ogw\'okugula', sellingPrice: 'Omuwendo Ogw\'okutunda', selectItem: '-- Londa Ekyamaguzi --',
-    addExpense: 'Wandiika Ebyasaasaanyiziddwa', expenseTitle: 'Kiki Ekyesaasaanyiddwa (Pram, Amasannyalaze)', amount: 'Sente',
+    addExpense: 'Wandiika Ebyasaasaanyiziddwa', expenseTitle: 'Kiki Ekyesaasaanyiddwa', amount: 'Sente',
     expenseLabel: 'Ebyasaasaanyiziddwa Biyonna', aiBtn: 'AI Kebera', downloadReport: 'Ggulawo Ripoota',
     installApp: 'Teeka ku Ssimu', profile: 'Ebikwata ku Ggwe', lowStock: 'Kiri kumpi kugwawo!',
     barcodeLabel: 'Namba ya Barcode', scanNow: 'Sikaaninga', autoMatch: 'Kizuuliddwa!',
     voiceTitle: 'Wandiikisa Eddoboozi (Voice Ledger)', startRec: 'Tandika Okukwata Eddoboozi', stopRec: 'Yimiriza',
     voiceHelper: 'Yogera n\'obwongo bw\'ekyuma buwandiike',
     debtTitle: 'Ebabanja (Debt Ledger)', customerName: 'Erinnya ly\'Amabanja', debtAmount: 'Omuwendo gw\'Ebbanja',
-    addDebt: 'Wandiika Ebbanja', sendReminder: 'Weereza ku WhatsApp', shareWhatsApp: 'Weereza Ripoota ku WhatsApp'
+    addDebt: 'Wandiika Ebbanja', sendReminder: 'Weereza ku WhatsApp', shareWhatsApp: 'Weereza Ripoota ku WhatsApp', scanBarcode: 'Sikaana Barcode'
   },
   sw: {
     title: 'Cash Track', revenue: 'Mapato', profit: 'Faida', stock: 'Bidhaa',
     addSale: 'Rekodi Mauzo', addItem: 'Weka Bidhaa', itemName: 'Jina la Bidhaa',
     quantity: 'Idadi', search: 'Tafuta...', noData: 'Hakuna rekodi zilizopatikana.',
     buyingPrice: 'Bei ya Kununua', sellingPrice: 'Bei ya Kuuza', selectItem: '-- Chagua Bidhaa --',
-    addExpense: 'Rekodi Matumizi', expenseTitle: 'Aina ya Matumizi (Pango...)', amount: 'Kiasi',
+    addExpense: 'Rekodi Matumizi', expenseTitle: 'Aina ya Matumizi', amount: 'Kiasi',
     expenseLabel: 'Jumla ya Matumizi', aiBtn: 'Uchambuzi wa AI', downloadReport: 'Pakua Ripoti',
     installApp: 'Weka kwenye Simu', profile: 'Wasifu', lowStock: 'Inaisha karibuni!',
     barcodeLabel: 'Nambari ya Barcode', scanNow: 'Skani Barcode', autoMatch: 'Imepatikana!',
     voiceTitle: 'Rekodi kwa Sauti (Voice Ledger)', startRec: 'Aanza Kurekodi', stopRec: 'Acha Kurekodi',
     voiceHelper: 'Zungumza na mfumo utaandika',
     debtTitle: 'Daftari la Madeni (Debt Ledger)', customerName: 'Jina la Mdeni', debtAmount: 'Kiasi cha Deni',
-    addDebt: 'Rekodi Deni', sendReminder: 'Kumbusha kwa WhatsApp', shareWhatsApp: 'Tuma Ripoti kwa WhatsApp'
+    addDebt: 'Rekodi Deni', sendReminder: 'Kumbusha kwa WhatsApp', shareWhatsApp: 'Tuma Ripoti kwa WhatsApp', scanBarcode: 'Skani Barcode'
   },
   ar: {
     title: 'كاش تراك', revenue: 'إجمالي الإيرادات', profit: 'صافي الأرباح', stock: 'المخزون',
     addSale: 'تسجيل بيع', addItem: 'إضافة منتج', itemName: 'اسم المنتج',
     quantity: 'الكمية', search: 'بحث...', noData: 'لا توجد سجلات اليوم.',
     buyingPrice: 'سعر الشراء', sellingPrice: 'سعر البيع', selectItem: '-- اختر المنتج --',
-    addExpense: 'تسجيل المصروفات', expenseTitle: 'نوع المصروف (إيجار...)', amount: 'المبلغ',
+    addExpense: 'تسجيل المصروفات', expenseTitle: 'نوع المصروف', amount: 'المبلغ',
     expenseLabel: 'إجمالي المصروفات', aiBtn: 'تحليل الذكاء الاصطناعي', downloadReport: 'تحميل التقرير',
     installApp: 'تثبيت التطبيق', profile: 'الملف الشخصي', lowStock: 'المخزون ينفد!',
     barcodeLabel: 'رقم الباركود', scanNow: 'مسح الباركود', autoMatch: 'تم التعرف عليه!',
     voiceTitle: 'التسجيل بالصوت الحقيقي', startRec: 'بدء التسجيل', stopRec: 'إيقاف التسجيل',
     voiceHelper: 'تحدث وسيتم تحويل صوتك إلى نص',
     debtTitle: 'دفتر الديون (Debt Ledger)', customerName: 'اسم المدين', debtAmount: 'مبلغ الدين',
-    addDebt: 'تسجيل دين', sendReminder: 'تذكير عبر WhatsApp', shareWhatsApp: 'مشاركة التقرير عبر WhatsApp'
+    addDebt: 'تسجيل دين', sendReminder: 'تذكير عبر WhatsApp', shareWhatsApp: 'مشاركة التقرير عبر WhatsApp', scanBarcode: 'مسح الباركود'
   }
 };
 
@@ -358,6 +358,19 @@ Please settle when possible. Thank you!`;
         </div>
       )}
 
+      {/* NAVIGATION TABS */}
+      <nav style={{ background: '#FFF', display: 'flex', justifyContent: 'space-around', borderBottom: '1px solid #E2E8F0', padding: '10px 0' }}>
+        <button onClick={() => setCurrentTab('home')} style={{ border: 'none', background: 'transparent', fontWeight: currentTab === 'home' ? 'bold' : 'normal', color: currentTab === 'home' ? '#2A9D8F' : '#64748B', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <Home size={18} /> {t.title}
+        </button>
+        <button onClick={() => setCurrentTab('inventory')} style={{ border: 'none', background: 'transparent', fontWeight: currentTab === 'inventory' ? 'bold' : 'normal', color: currentTab === 'inventory' ? '#2A9D8F' : '#64748B', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <Package size={18} /> {t.stock} ({inventory.length})
+        </button>
+        <button onClick={() => setCurrentTab('history')} style={{ border: 'none', background: 'transparent', fontWeight: currentTab === 'history' ? 'bold' : 'normal', color: currentTab === 'history' ? '#2A9D8F' : '#64748B', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <Brain size={18} /> AI Reports ({aiReports.length})
+        </button>
+      </nav>
+
       {/* MAIN WORKSPACE */}
       <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '16px' }}>
         
@@ -373,7 +386,7 @@ Please settle when possible. Thank you!`;
           </div>
         )}
 
-        <div className="responsive-grid">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
           {currentTab === 'home' && (
             <>
               {/* FINANCIAL STATS */}
@@ -476,7 +489,7 @@ Please settle when possible. Thank you!`;
               <div style={{ background: '#FFF', padding: '16px', borderRadius: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                   <h3 style={{ margin: 0, fontSize: '16px' }}>Live Automated Ledger ({selectedDate})</h3>
-                  <button onClick={runAutoAiAudit} style={{ background: '#1E293B', color: '#FFF', border: 'none', padding: '6px 12px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+                  <button onClick={runAutoAiAudit} style={{ background: '#1E293B', color: '#FFF', border: 'none', padding: '6px 12px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', cursor: 'pointer' }}>
                     <Brain size={16} color="#2A9D8F" /> {t.aiBtn}
                   </button>
                 </div>
@@ -502,71 +515,86 @@ Please settle when possible. Thank you!`;
                   <input type="number" value={prodCost} onChange={(e) => setProdCost(e.target.value)} placeholder={t.buyingPrice} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #CBD5E1' }} required />
                   <input type="number" value={prodPrice} onChange={(e) => setProdPrice(e.target.value)} placeholder={t.sellingPrice} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #CBD5E1' }} required />
                   <input type="number" value={prodQty} onChange={(e) => setProdQty(e.target.value)} placeholder={t.quantity} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #CBD5E1' }} required />
-                  <div style={{display:'flex', gap: '4px'}}>
+                  
+                  <div style={{ display: 'flex', gap: '6px' }}>
                     <input type="text" value={prodBarcode} onChange={(e) => setProdBarcode(e.target.value)} placeholder={t.barcodeLabel} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #CBD5E1', flex: 1 }} />
-                    <button type="button" onClick={() => startCameraScan('inventory')} style={{background:'#1E293B', color:'#FFF', border:'none', padding:'10px', borderRadius:'6px'}}><Camera size={16}/></button>
+                    <button type="button" onClick={() => startCameraScan('inventory')} style={{ background: '#1E293B', color: '#FFF', border: 'none', padding: '10px', borderRadius: '6px', cursor: 'pointer' }}>
+                      <Camera size={16} />
+                    </button>
                   </div>
-                  <button type="submit" style={{ background: '#2A9D8F', color: '#FFF', border: 'none', padding: '12px', borderRadius: '6px', fontWeight: 'bold' }}>{t.addItem}</button>
+
+                  <button type="submit" style={{ background: '#2A9D8F', color: '#FFF', border: 'none', padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}>
+                    {t.addItem}
+                  </button>
                 </form>
               </div>
 
-              <div style={{ background: '#FFF', padding: '16px', borderRadius: '12px' }}>
-                <h3 style={{ margin: '0 0 12px 0', fontSize: '16px' }}>Active Stock Level Matrix</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {inventory.length === 0 ? <p style={{fontSize:'13px', color:'#64748B', textAlign:'center', padding:'20px'}}>No records in stock sheet.</p> : inventory.map(item => (
-                    <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', background: '#F8FAFC', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
-                      <div>
-                        <strong style={{fontSize:'14px'}}>{item.name}</strong>
-                        <div style={{ fontSize: '12px', color: '#64748B' }}>Cost: {item.cost} / Price: {item.price} {item.barcode && `| 🏷️ Barcode: ${item.barcode}`}</div>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        {item.qty <= 5 && <span style={{ background: '#FEE2E2', color: '#DC3545', fontSize: '11px', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold' }}>{t.lowStock}</span>}
-                        <span style={{ fontWeight: 'bold', fontSize:'13px' }}>{item.qty} units left</span>
-                        <button onClick={() => setInventory(prev => prev.filter(x => x.id !== item.id))} style={{ background: 'transparent', border: 'none', color: '#DC3545' }}><Trash2 size={14} /></button>
-                      </div>
+              {/* INVENTORY LIST TABLE */}
+              <div style={{ background: '#FFF', padding: '16px', borderRadius: '12px', overflowX: 'auto' }}>
+                <h3 style={{ margin: '0 0 12px 0', fontSize: '16px' }}>{t.stock} ({inventory.length})</h3>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'left' }}>
+                  <thead>
+                    <tr style={{ background: '#F8FAFC', borderBottom: '2px solid #E2E8F0' }}>
+                      <th style={{ padding: '10px' }}>{t.itemName}</th>
+                      <th style={{ padding: '10px' }}>{t.buyingPrice}</th>
+                      <th style={{ padding: '10px' }}>{t.sellingPrice}</th>
+                      <th style={{ padding: '10px' }}>{t.quantity}</th>
+                      <th style={{ padding: '10px' }}>{t.barcodeLabel}</th>
+                      <th style={{ padding: '10px' }}>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {inventory.length === 0 ? (
+                      <tr><td colSpan="6" style={{ padding: '16px', textAlign: 'center', color: '#64748B' }}>{t.noData}</td></tr>
+                    ) : (
+                      inventory.map(item => (
+                        <tr key={item.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                          <td style={{ padding: '10px', fontWeight: 'bold' }}>{item.name}</td>
+                          <td style={{ padding: '10px' }}>{item.cost} {currency}</td>
+                          <td style={{ padding: '10px' }}>{item.price} {currency}</td>
+                          <td style={{ padding: '10px' }}>
+                            <span style={{ color: item.qty <= 2 ? '#DC3545' : '#1E293B', fontWeight: item.qty <= 2 ? 'bold' : 'normal' }}>
+                              {item.qty} {item.qty <= 2 && `(${t.lowStock})`}
+                            </span>
+                          </td>
+                          <td style={{ padding: '10px', color: '#64748B' }}>{item.barcode || '—'}</td>
+                          <td style={{ padding: '10px' }}>
+                            <button onClick={() => setInventory(prev => prev.filter(i => i.id !== item.id))} style={{ background: '#FEE2E2', border: 'none', color: '#DC3545', padding: '6px', borderRadius: '4px', cursor: 'pointer' }}>
+                              <Trash2 size={14} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* AI REPORTS TAB */}
+          {currentTab === 'history' && (
+            <div style={{ gridColumn: '1 / -1', background: '#FFF', padding: '16px', borderRadius: '12px' }}>
+              <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', color: '#1E293B', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Brain color="#2A9D8F" size={20} /> AI Generated Business Audits
+              </h3>
+              {aiReports.length === 0 ? (
+                <p style={{ fontSize: '13px', color: '#64748B' }}>No AI audits generated yet. Click "{t.aiBtn}" on the main screen to create one.</p>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {aiReports.map(rep => (
+                    <div key={rep.id} style={{ background: '#F8FAFC', padding: '12px', borderRadius: '8px', borderLeft: '4px solid #2A9D8F' }}>
+                      <div style={{ fontSize: '11px', color: '#64748B', marginBottom: '4px' }}>Date: {rep.date}</div>
+                      <p style={{ margin: 0, fontSize: '13px', color: '#1E293B', lineHeight: '1.5' }}>{rep.text}</p>
                     </div>
                   ))}
                 </div>
-              </div>
+              )}
             </div>
           )}
 
-          {/* AI REPORTS */}
-          {currentTab === 'history' && (
-            <div style={{ gridColumn: '1 / -1', background: '#FFF', padding: '16px', borderRadius: '12px' }}>
-              <h3 style={{ margin: '0 0 12px 0', fontSize: '16px' }}>AI Financial Audit Backlogs</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {aiReports.length === 0 ? <p style={{fontSize:'13px', color:'#64748B', textAlign:'center', padding:'30px'}}>Click Auto AI Audit on home panel first.</p> : aiReports.map(r => (
-                  <div key={r.id} style={{ padding: '12px', background: '#F8FAFC', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
-                    <p style={{ margin: 0, fontSize: '13px', color:'#334155' }}>{r.text}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </main>
-
-      {/* FOOTER TASKBAR */}
-      <nav style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: '60px', background: '#1E293B', borderTop: '1px solid #334155', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 1000 }}>
-        <button onClick={() => setCurrentTab('home')} style={{ background: 'transparent', border: 'none', color: currentTab === 'home' ? '#2A9D8F' : '#94A3B8', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '11px' }}>
-          <Home size={18} /> <span>Home</span>
-        </button>
-        <button onClick={() => setCurrentTab('inventory')} style={{ background: 'transparent', border: 'none', color: currentTab === 'inventory' ? '#2A9D8F' : '#94A3B8', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '11px' }}>
-          <Package size={18} /> <span>{t.stock}</span>
-        </button>
-        <button onClick={() => setCurrentTab('history')} style={{ background: 'transparent', border: 'none', color: currentTab === 'history' ? '#2A9D8F' : '#94A3B8', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '11px' }}>
-          <Download size={18} /> <span>AI Audit</span>
-        </button>
-        <button onClick={triggerNativePwaInstall} style={{ background: 'transparent', border: 'none', color: '#E76F51', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '11px' }}>
-          <Smartphone size={18} /> <span>Install</span>
-        </button>
-      </nav>
-
-      <style>{`
-        .responsive-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
-        @media (min-width: 900px) { .responsive-grid { grid-template-columns: 1fr 1fr; } }
-      `}</style>
     </div>
   );
 }
