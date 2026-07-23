@@ -14,6 +14,7 @@ const TRANSLATIONS = {
     expenseLabel: 'ጠቅላላ ወጻኢታት', aiBtn: 'ባዕልኻ ብ AI መርምር', downloadReport: 'ጸብጻብ ኣውርድ',
     installApp: 'ኣብ ቴሌፎን ጽዓን', profile: 'ፕሮፋይል', lowStock: 'ክውዳእ ቀሪቡ!',
     barcodeLabel: 'ባርኮድ ቁጽሪ', scanNow: 'ካሜራ ስካን', autoMatch: 'ባዕሉ ተረኺቡ!',
+    scanBarcode: 'ስካን ግበር',
     voiceTitle: 'ብድምጺ (Voice Entry) መዝግብ', startRec: 'ድምጺ ሪኮርድ ጀምር', stopRec: 'ሪኮርድ ደው ኣብል',
     voiceHelper: 'ማይክሮፎን ከፊቱ ግዜ የቑጥብ',
     debtTitle: 'ዕዳ መቆጻጸሪ (Debt Ledger)', customerName: 'ስም ዓሚል', debtAmount: 'መጠን ዕዳ',
@@ -28,6 +29,7 @@ const TRANSLATIONS = {
     expenseLabel: 'Total Expenses', aiBtn: 'Auto AI Audit', downloadReport: 'Download Report',
     installApp: 'Install App', profile: 'Profile', lowStock: 'Low Stock!',
     barcodeLabel: 'Barcode Number', scanNow: 'Camera Scan', autoMatch: 'Auto Matched!',
+    scanBarcode: 'Scan Barcode',
     voiceTitle: 'Voice Recording Ledger', startRec: 'Start Recording', stopRec: 'Stop Recording',
     voiceHelper: 'Speak to save time instantly',
     debtTitle: 'Debt Collector Ledger', customerName: 'Customer Name', debtAmount: 'Debt Amount',
@@ -68,7 +70,7 @@ export default function App() {
   const [prodQty, setProdQty] = useState('');
   const [prodBarcode, setProdBarcode] = useState('');
 
-  // Hardware Hardware Integrations
+  // Hardware Integrations
   const [isScanning, setIsScanning] = useState(false);
   const [scanTargetType, setScanTargetType] = useState('sale');
   const videoRef = useRef(null);
@@ -260,6 +262,20 @@ export default function App() {
   return (
     <div style={{ background: '#F4F6F8', minHeight: '100vh', paddingBottom: '80px', fontFamily: 'system-ui, sans-serif', boxSizing: 'border-box' }}>
       
+      {/* CSS Layout Helpers */}
+      <style>{`
+        .responsive-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+        @media (min-width: 768px) {
+          .responsive-grid {
+            grid-template-columns: 1fr 1fr;
+          }
+        }
+      `}</style>
+
       {/* HEADER BANNER CONTROLS */}
       <header style={{ background: '#1E293B', color: '#FFF', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
         <h1 style={{ margin: 0, fontSize: '20px', fontWeight: 'bold', color: '#2A9D8F' }}>{t.title} ⚡ <span style={{fontSize:'12px', color:'#94A3B8'}}>Final V8</span></h1>
@@ -271,7 +287,7 @@ export default function App() {
           <select value={currency} onChange={(e) => setCurrency(e.target.value)} style={{ background: '#334155', color: '#FFF', border: 'none', padding: '8px', borderRadius: '6px' }}>
             {Object.keys(CURRENCIES).map(c => <option key={c} value={c}>{c}</option>)}
           </select>
-          <button onClick={() => setLang(lang === 'ti' ? 'en' : 'ti')} style={{ background: '#2A9D8F', color: '#FFF', border: 'none', padding: '8px 14px', borderRadius: '6px', fontWeight: 'bold' }}>{lang === 'ti' ? 'English' : 'ትግርኛ'}</button>
+          <button onClick={() => setLang(lang === 'ti' ? 'en' : 'ti')} style={{ background: '#2A9D8F', color: '#FFF', border: 'none', padding: '8px 14px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}>{lang === 'ti' ? 'English' : 'ትግርኛ'}</button>
         </div>
       </header>
 
@@ -280,8 +296,8 @@ export default function App() {
         <div style={{ background: '#2A9D8F', color: '#FFF', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px' }}>
           <span>📲 <strong>{t.installApp}፦</strong> ነዛ ኣፕ ከም ናይ ቴሌፎን ኣፕሊኬሽን ጌርካ ኣብ ስልክኻ ንምጽዓን "Install" ንበል።</span>
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button onClick={showPwaGuide} style={{ background: '#1E293B', color: '#FFF', border: 'none', padding: '6px 12px', borderRadius: '4px', fontWeight: 'bold' }}>Install</button>
-            <button onClick={() => setShowPwaPopUp(false)} style={{ background: 'transparent', border: 'none', color: '#FFF' }}><X size={18} /></button>
+            <button onClick={showPwaGuide} style={{ background: '#1E293B', color: '#FFF', border: 'none', padding: '6px 12px', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}>Install</button>
+            <button onClick={() => setShowPwaPopUp(false)} style={{ background: 'transparent', border: 'none', color: '#FFF', cursor: 'pointer' }}><X size={18} /></button>
           </div>
         </div>
       )}
@@ -294,10 +310,10 @@ export default function App() {
           <div style={{ background: '#000', borderRadius: '12px', padding: '16px', marginBottom: '20px', color: '#FFF', textAlign: 'center' }}>
             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom: '10px'}}>
               <span style={{fontSize:'14px', fontWeight:'bold'}}>⚡ LIVE AUTOMATED CAMERA BARCODE DETECTOR</span>
-              <button onClick={stopCameraScan} style={{background:'transparent', border:'none', color:'#FFF'}}><X size={20}/></button>
+              <button onClick={stopCameraScan} style={{background:'transparent', border:'none', color:'#FFF', cursor:'pointer'}}><X size={20}/></button>
             </div>
             <video ref={videoRef} autoPlay playsInline style={{ width: '100%', maxHeight: '220px', objectFit: 'cover', borderRadius: '8px' }} />
-            <button onClick={triggerMockScanMatch} style={{ background: '#2A9D8F', border: 'none', color: '#FFF', padding: '10px 20px', borderRadius: '6px', marginTop: '12px', fontWeight: 'bold' }}>模拟 / Capture Code</button>
+            <button onClick={triggerMockScanMatch} style={{ background: '#2A9D8F', border: 'none', color: '#FFF', padding: '10px 20px', borderRadius: '6px', marginTop: '12px', fontWeight: 'bold', cursor: 'pointer' }}>模拟 / Capture Code</button>
           </div>
         )}
 
@@ -349,7 +365,7 @@ export default function App() {
                 <div style={{ background: '#FFF', padding: '16px', borderRadius: '12px' }}>
                   <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'12px'}}>
                     <h3 style={{ margin: 0, fontSize: '16px' }}>{t.addSale}</h3>
-                    <button onClick={() => startCameraScan('sale')} style={{ background: '#E2E8F0', border: 'none', padding: '6px 12px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 'bold', fontSize: '12px' }}>
+                    <button onClick={() => startCameraScan('sale')} style={{ background: '#E2E8F0', border: 'none', padding: '6px 12px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}>
                       <Camera size={16} /> {t.scanBarcode}
                     </button>
                   </div>
@@ -359,7 +375,7 @@ export default function App() {
                       {inventory.map(i => <option key={i.id} value={i.name}>{i.name} (Price: {i.price} / Stock: {i.qty})</option>)}
                     </select>
                     <input type="number" value={saleQty} onChange={(e) => setSaleQty(e.target.value)} placeholder={t.quantity} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #CBD5E1' }} required />
-                    <button type="submit" style={{ background: '#2A9D8F', color: '#FFF', border: 'none', padding: '12px', borderRadius: '6px', fontWeight: 'bold' }}>{t.addSale}</button>
+                    <button type="submit" style={{ background: '#2A9D8F', color: '#FFF', border: 'none', padding: '12px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}>{t.addSale}</button>
                   </form>
                 </div>
 
@@ -369,7 +385,7 @@ export default function App() {
                   <form onSubmit={handleAddExpense} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <input type="text" value={expTitle} onChange={(e) => setExpTitle(e.target.value)} placeholder={t.expenseTitle} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #CBD5E1' }} required />
                     <input type="number" value={expAmount} onChange={(e) => setExpAmount(e.target.value)} placeholder={t.amount} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #CBD5E1' }} required />
-                    <button type="submit" style={{ background: '#1E293B', color: '#FFF', border: 'none', padding: '12px', borderRadius: '6px', fontWeight: 'bold' }}>{t.addExpense}</button>
+                    <button type="submit" style={{ background: '#1E293B', color: '#FFF', border: 'none', padding: '12px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}>{t.addExpense}</button>
                   </form>
                 </div>
 
@@ -379,7 +395,7 @@ export default function App() {
                   <form onSubmit={handleAddDebt} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <input type="text" value={debtCustName} onChange={(e) => setDebtCustName(e.target.value)} placeholder={t.customerName} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #CBD5E1' }} required />
                     <input type="number" value={debtAmountInput} onChange={(e) => setDebtAmountInput(e.target.value)} placeholder={t.debtAmount} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #CBD5E1' }} required />
-                    <button type="submit" style={{ background: '#E76F51', color: '#FFF', border: 'none', padding: '12px', borderRadius: '6px', fontWeight: 'bold' }}>{t.addDebt}</button>
+                    <button type="submit" style={{ background: '#E76F51', color: '#FFF', border: 'none', padding: '12px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}>{t.addDebt}</button>
                   </form>
 
                   <div style={{ marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -403,7 +419,7 @@ export default function App() {
               <div style={{ background: '#FFF', padding: '16px', borderRadius: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                   <h3 style={{ margin: 0, fontSize: '16px' }}>Live Automated Ledger ({selectedDate})</h3>
-                  <button onClick={runAutoAiAudit} style={{ background: '#1E293B', color: '#FFF', border: 'none', padding: '6px 12px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+                  <button onClick={runAutoAiAudit} style={{ background: '#1E293B', color: '#FFF', border: 'none', padding: '6px 12px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', cursor: 'pointer' }}>
                     <Brain size={16} color="#2A9D8F" /> {t.aiBtn}
                   </button>
                 </div>
@@ -431,9 +447,9 @@ export default function App() {
                   <input type="number" value={prodQty} onChange={(e) => setProdQty(e.target.value)} placeholder={t.quantity} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #CBD5E1' }} required />
                   <div style={{display:'flex', gap: '4px'}}>
                     <input type="text" value={prodBarcode} onChange={(e) => setProdBarcode(e.target.value)} placeholder={t.barcodeLabel} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #CBD5E1', flex: 1 }} />
-                    <button type="button" onClick={() => startCameraScan('inventory')} style={{background:'#1E293B', color:'#FFF', border:'none', padding:'10px', borderRadius:'6px'}}><Camera size={16}/></button>
+                    <button type="button" onClick={() => startCameraScan('inventory')} style={{background:'#1E293B', color:'#FFF', border:'none', padding:'10px', borderRadius:'6px', cursor:'pointer'}}><Camera size={16}/></button>
                   </div>
-                  <button type="submit" style={{ background: '#2A9D8F', color: '#FFF', border: 'none', padding: '12px', borderRadius: '6px', fontWeight: 'bold' }}>{t.addItem}</button>
+                  <button type="submit" style={{ background: '#2A9D8F', color: '#FFF', border: 'none', padding: '12px', borderRadius: '6px', fontWeight: 'bold', cursor:'pointer' }}>{t.addItem}</button>
                 </form>
               </div>
 
@@ -449,7 +465,7 @@ export default function App() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         {item.qty <= 5 && <span style={{ background: '#FEE2E2', color: '#DC3545', fontSize: '11px', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold' }}>{t.lowStock}</span>}
                         <span style={{ fontWeight: 'bold', fontSize:'13px' }}>{item.qty} units left</span>
-                        <button onClick={() => setInventory(prev => prev.filter(x => x.id !== item.id))} style={{ background: 'transparent', border: 'none', color: '#DC3545' }}><Trash2 size={14} /></button>
+                        <button onClick={() => setInventory(prev => prev.filter(x => x.id !== item.id))} style={{ background: 'transparent', border: 'none', color: '#DC3545', cursor:'pointer' }}><Trash2 size={14} /></button>
                       </div>
                     </div>
                   ))}
@@ -476,24 +492,17 @@ export default function App() {
 
       {/* FOOTER TASKBAR */}
       <nav style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: '60px', background: '#1E293B', borderTop: '1px solid #334155', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 1000 }}>
-        <button onClick={() => setCurrentTab('home')} style={{ background: 'transparent', border: 'none', color: currentTab === 'home' ? '#2A9D8F' : '#94A3B8', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '11px' }}>
+        <button onClick={() => setCurrentTab('home')} style={{ background: 'transparent', border: 'none', color: currentTab === 'home' ? '#2A9D8F' : '#94A3B8', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '11px', cursor:'pointer' }}>
           <Home size={18} /> <span>Home</span>
         </button>
-        <button onClick={() => setCurrentTab('inventory')} style={{ background: 'transparent', border: 'none', color: currentTab === 'inventory' ? '#2A9D8F' : '#94A3B8', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '11px' }}>
+        <button onClick={() => setCurrentTab('inventory')} style={{ background: 'transparent', border: 'none', color: currentTab === 'inventory' ? '#2A9D8F' : '#94A3B8', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '11px', cursor:'pointer' }}>
           <Package size={18} /> <span>{t.stock}</span>
         </button>
-        <button onClick={() => setCurrentTab('history')} style={{ background: 'transparent', border: 'none', color: currentTab === 'history' ? '#2A9D8F' : '#94A3B8', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '11px' }}>
-          <Download size={18} /> <span>AI Audit</span>
-        </button>
-        <button onClick={showPwaGuide} style={{ background: 'transparent', border: 'none', color: '#E76F51', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '11px' }}>
-          <Smartphone size={18} /> <span>Install</span>
+        <button onClick={() => setCurrentTab('history')} style={{ background: 'transparent', border: 'none', color: currentTab === 'history' ? '#2A9D8F' : '#94A3B8', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '11px', cursor:'pointer' }}>
+          <Brain size={18} /> <span>AI Audit</span>
         </button>
       </nav>
 
-      <style>{`
-        .responsive-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
-        @media (min-width: 900px) { .responsive-grid { grid-template-columns: 1fr 1fr; } }
-      `}</style>
     </div>
   );
 }
