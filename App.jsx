@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   TrendingUp, TrendingDown, Package, DollarSign, Plus, Trash2, 
-  Languages, Calendar, Search, Brain, Home, Download, Smartphone, User, Camera, X, Check, Mic, Square, Volume2, Share2, AlertCircle
+  Languages, Calendar, Search, Brain, Home, Download, Smartphone, User, Camera, X, Check, Mic, Square, Volume2, Share2, AlertCircle, Play
 } from 'lucide-react';
 
 const TRANSLATIONS = {
@@ -15,8 +15,8 @@ const TRANSLATIONS = {
     installApp: 'ኣብ ቴሌፎን ጽዓን', profile: 'ፕሮፋይል', lowStock: 'ክውዳእ ቀሪቡ!',
     barcodeLabel: 'ባርኮድ ቁጽሪ', scanNow: 'ካሜራ ስካን', autoMatch: 'ባዕሉ ተረኺቡ!',
     scanBarcode: 'ስካን ግበር',
-    voiceTitle: 'ብድምጺ (Voice Entry) መዝግብ', startRec: 'ድምጺ ሪኮርድ ጀምር', stopRec: 'ሪኮርድ ደው ኣብል',
-    voiceHelper: 'ማይክሮፎን ከፊቱ ግዜ የቑጥብ',
+    voiceTitle: 'ብድምጺ (Voice Memo) መዝግብ', startRec: 'ድምጺ ሪኮርድ ጀምር', stopRec: 'ሪኮርድ ደው ኣብል',
+    voiceHelper: 'እቲ ዝበልካዮ ድምጺ ተቐዲሑ ምሸት ክትሰምዖ ይጽናሕ',
     debtTitle: 'ዕዳ መቆጻጸሪ (Debt Ledger)', customerName: 'ስም ዓሚል', debtAmount: 'መጠን ዕዳ',
     addDebt: 'ዕዳ መዝግብ', sendReminder: 'ብ WhatsApp ዘዘኻኽር', shareWhatsApp: 'መዓልታዊ ጸብጻብ ብ WhatsApp ስደድ'
   },
@@ -30,15 +30,15 @@ const TRANSLATIONS = {
     installApp: 'Install App', profile: 'Profile', lowStock: 'Low Stock!',
     barcodeLabel: 'Barcode Number', scanNow: 'Camera Scan', autoMatch: 'Auto Matched!',
     scanBarcode: 'Scan Barcode',
-    voiceTitle: 'Voice Recording Ledger', startRec: 'Start Recording', stopRec: 'Stop Recording',
-    voiceHelper: 'Speak to save time instantly',
+    voiceTitle: 'Voice Audio Memo Ledger', startRec: 'Start Recording', stopRec: 'Stop Recording',
+    voiceHelper: 'Record voice memos to review and confirm sales later',
     debtTitle: 'Debt Collector Ledger', customerName: 'Customer Name', debtAmount: 'Debt Amount',
     addDebt: 'Record Debt', sendReminder: 'Send WhatsApp Reminder', shareWhatsApp: 'Share Daily Report to WhatsApp'
   }
 };
 
-const CURRENCIES = { UGX: 'UGX', USD: '$', KSH: 'KSH', ERN: 'Nfa' };
-const BUSINESS_TYPES = ['Shop (ዱኳን)', 'Saloon', 'Supermarket', 'Bar', 'Restaurant', 'Pharmacy'];
+const CURRENCIES = { UGX: 'UGX', USD: '$', KSH: 'KSH', ERN: 'EURO' };
+const BUSINESS_TYPES = ['Shop (ዱኳን)', 'Saloon', 'Supermarket', 'Bar', 'Restaurant', 'Pharmacy', 'wholesaler', 'Garage', 'Cafe', 'Hospotal', 'Boutique', 'Studio (videography)', 'clothier (ሰፋይ ክዳዉንቲ)', 'Electronics', 'play station'];
 
 export default function App() {
   const [lang, setLang] = useState('ti');
@@ -54,7 +54,7 @@ export default function App() {
   const [debts, setDebts] = useState(() => JSON.parse(localStorage.getItem('ct_debts_v8')) || []);
   const [aiReports, setAiReports] = useState(() => JSON.parse(localStorage.getItem('ct_ai_v8')) || []);
   const [voiceNotes, setVoiceNotes] = useState(() => JSON.parse(localStorage.getItem('ct_voice_v8')) || []);
-  const [isPremium, setIsPremium] = useState(() => JSON.parse(localStorage.getItem('ct_prem_v8')) || false);
+  const [whisperApiKey, setWhisperApiKey] = useState(() => localStorage.getItem('ct_whisper_key') || '');
 
   // Form Inputs States
   const [saleItemName, setSaleItemName] = useState('');
@@ -74,7 +74,6 @@ export default function App() {
   const [isScanning, setIsScanning] = useState(false);
   const [scanTargetType, setScanTargetType] = useState('sale');
   const videoRef = useRef(null);
-  const [showPwaPopUp, setShowPwaPopUp] = useState(true);
 
   // Voice Engine States
   const [isRecording, setIsRecording] = useState(false);
@@ -88,11 +87,12 @@ export default function App() {
   useEffect(() => { localStorage.setItem('ct_debts_v8', JSON.stringify(debts)); }, [debts]);
   useEffect(() => { localStorage.setItem('ct_ai_v8', JSON.stringify(aiReports)); }, [aiReports]);
   useEffect(() => { localStorage.setItem('ct_voice_v8', JSON.stringify(voiceNotes)); }, [voiceNotes]);
-  useEffect(() => { localStorage.setItem('ct_prem_v8', JSON.stringify(isPremium)); }, [isPremium]);
+  useEffect(() => { localStorage.setItem('ct_whisper_key', whisperApiKey); }, [whisperApiKey]);
 
   // FINANCIAL ACCOUNTING LOGIC CALCULATIONS
   const activeSales = sales.filter(s => s.date === selectedDate);
   const activeExpenses = expenses.filter(e => e.date === selectedDate);
+  const activeVoiceNotes = voiceNotes.filter(v => v.date === selectedDate);
 
   const totalRevenue = activeSales.reduce((sum, s) => sum + s.revenue, 0);
   const totalCostOfGoods = activeSales.reduce((sum, s) => sum + (s.qty * s.cost), 0);
@@ -160,7 +160,7 @@ export default function App() {
     }
   };
 
-  // 4. AUDIO VOICE RECORDING MODULE
+  // 4. AUDIO VOICE MEMO RECORDING (CLEAN & ACCURATE)
   const startVoiceRecording = async () => {
     audioChunksRef.current = [];
     try {
@@ -172,37 +172,27 @@ export default function App() {
         if (event.data.size > 0) audioChunksRef.current.push(event.data);
       };
 
-      mediaRecorder.onstop = () => {
+      mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
         const reader = new FileReader();
         reader.readAsDataURL(audioBlob);
-        reader.onloadend = () => {
+        reader.onloadend = async () => {
           const base64Audio = reader.result;
-          
-          const mockVoiceTexts = [
-            "ሽያጭ ሓድሽ ዕቃ", "ወጻኢታት ኪራይ ዱኳን", "ሽያጭ ንብረት 15000", "ወጻኢ መግቢ 4000"
-          ];
-          const predictedText = mockVoiceTexts[Math.floor(Math.random() * mockVoiceTexts.length)];
+          const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
           const newVoiceNote = {
-            id: Date.now().toString(), date: selectedDate,
-            audioData: base64Audio, textTranscript: predictedText
+            id: Date.now().toString(), date: selectedDate, time: timeString,
+            audioData: base64Audio
           };
 
           setVoiceNotes(prev => [newVoiceNote, ...prev]);
-
-          if (predictedText.includes("ሽያጥ") && inventory.length > 0) {
-            executeSaleAutomation(inventory[0].name, 1);
-          } else if (predictedText.includes("ወጻኢ")) {
-            setExpenses(prev => [{ id: Date.now().toString(), title: "ብድምጺ ዝኣተወ ወጻኢ", amount: 5000, date: selectedDate }, ...prev]);
-          }
         };
       };
 
       mediaRecorder.start();
       setIsRecording(true);
     } catch (err) {
-      alert("Microphone permission required for Audio voice entry.");
+      alert("Microphone permission required for Audio recording.");
     }
   };
 
@@ -212,6 +202,11 @@ export default function App() {
       mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
       setIsRecording(false);
     }
+  };
+
+  const playAudioNote = (audioData) => {
+    const audio = new Audio(audioData);
+    audio.play();
   };
 
   // 5. EXPENSE & DEBT RECORDERS
@@ -234,7 +229,7 @@ export default function App() {
 -------------------
 💰 ጠቅላላ ኣታዊ: ${totalRevenue.toLocaleString()} ${currency}
 💸 ጠቅላላ ወጻኢ: ${totalExpenses.toLocaleString()} ${currency}
-📈 ሓቀኛ ረብሓ: ${netProfit.toLocaleString()} ${currency}
+📈 መኽሰብ: ${netProfit.toLocaleString()} ${currency}
 -------------------
 በዛ ጽብቕቲ ኣፕ (Cash Track) ዝተዳለወ እዩ።`;
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
@@ -242,19 +237,15 @@ export default function App() {
 
   const sendDebtReminder = (debtItem) => {
     const message = `ሰላም ${debtItem.name}፣ ካብ ${bizType} እየ። 
-ኣብ ዱኳንና ዝነበረካ ዱቤ ብዝሕቱ ${debtItem.amount} ${currency} እዩ። 
+ኣብ ትካልና ዘለካ ዕዳ ብዝሑ ${debtItem.amount} ${currency} እዩ። 
 ምስ ተረኽበ ክትከፍለና ብትሕትና ንሓትት። የቐንየልና!`;
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   const runAutoAiAudit = () => {
-    const reportText = `[AI Automated Audit V8] Location Context: ${bizType} (${selectedDate}). Gross Revenue accumulated: ${totalRevenue} ${currency}, total expenses: ${totalExpenses} ${currency}. Real net profit stands at ${netProfit} ${currency}. Debts registered: ${debts.length}. Status: Fully Synchronized.`;
+    const reportText = `[AI Automated Audit V8.1] Location Context: ${bizType} (${selectedDate}). Gross Revenue accumulated: ${totalRevenue} ${currency}, total expenses: ${totalExpenses} ${currency}. Real net profit stands at ${netProfit} ${currency}. Debts registered: ${debts.length}. Voice Memos stored: ${activeVoiceNotes.length}. Status: Fully Synchronized.`;
     setAiReports(prev => [{ id: Date.now().toString(), date: selectedDate, text: reportText }, ...prev]);
     setCurrentTab('history');
-  };
-
-  const showPwaGuide = () => {
-    alert("📲 HOW TO INSTALL TO HOME SCREEN:\n\nAndroid: Tap 3 dots -> 'Add to Home screen'.\niPhone: Tap 'Share' icon -> 'Add to Home Screen'.");
   };
 
   const t = TRANSLATIONS[lang];
@@ -262,7 +253,6 @@ export default function App() {
   return (
     <div style={{ background: '#F4F6F8', minHeight: '100vh', paddingBottom: '80px', fontFamily: 'system-ui, sans-serif', boxSizing: 'border-box' }}>
       
-      {/* CSS Layout Helpers */}
       <style>{`
         .responsive-grid {
           display: grid;
@@ -278,7 +268,7 @@ export default function App() {
 
       {/* HEADER BANNER CONTROLS */}
       <header style={{ background: '#1E293B', color: '#FFF', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-        <h1 style={{ margin: 0, fontSize: '20px', fontWeight: 'bold', color: '#2A9D8F' }}>{t.title} ⚡ <span style={{fontSize:'12px', color:'#94A3B8'}}>Final V8</span></h1>
+        <h1 style={{ margin: 0, fontSize: '20px', fontWeight: 'bold', color: '#2A9D8F' }}>{t.title} ⚡ <span style={{fontSize:'12px', color:'#94A3B8'}}>V8.1 Clean Architecture</span></h1>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
           <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} style={{ background: '#334155', color: '#FFF', border: 'none', padding: '8px', borderRadius: '6px' }} />
           <select value={bizType} onChange={(e) => setBizType(e.target.value)} style={{ background: '#334155', color: '#FFF', border: 'none', padding: '8px', borderRadius: '6px' }}>
@@ -291,17 +281,6 @@ export default function App() {
         </div>
       </header>
 
-      {/* PWA INSTALLATION BANNER */}
-      {showPwaPopUp && (
-        <div style={{ background: '#2A9D8F', color: '#FFF', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px' }}>
-          <span>📲 <strong>{t.installApp}፦</strong> ነዛ ኣፕ ከም ናይ ቴሌፎን ኣፕሊኬሽን ጌርካ ኣብ ስልክኻ ንምጽዓን "Install" ንበል።</span>
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <button onClick={showPwaGuide} style={{ background: '#1E293B', color: '#FFF', border: 'none', padding: '6px 12px', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}>Install</button>
-            <button onClick={() => setShowPwaPopUp(false)} style={{ background: 'transparent', border: 'none', color: '#FFF', cursor: 'pointer' }}><X size={18} /></button>
-          </div>
-        </div>
-      )}
-
       {/* MAIN WORKSPACE AREA */}
       <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '16px' }}>
         
@@ -313,7 +292,7 @@ export default function App() {
               <button onClick={stopCameraScan} style={{background:'transparent', border:'none', color:'#FFF', cursor:'pointer'}}><X size={20}/></button>
             </div>
             <video ref={videoRef} autoPlay playsInline style={{ width: '100%', maxHeight: '220px', objectFit: 'cover', borderRadius: '8px' }} />
-            <button onClick={triggerMockScanMatch} style={{ background: '#2A9D8F', border: 'none', color: '#FFF', padding: '10px 20px', borderRadius: '6px', marginTop: '12px', fontWeight: 'bold', cursor: 'pointer' }}>模拟 / Capture Code</button>
+            <button onClick={triggerMockScanMatch} style={{ background: '#2A9D8F', border: 'none', color: '#FFF', padding: '10px 20px', borderRadius: '6px', marginTop: '12px', fontWeight: 'bold', cursor: 'pointer' }}>Capture Code</button>
           </div>
         )}
 
@@ -337,7 +316,7 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* 🎙️ FEATURE 1: AUDIO VOICE INPUT LEDGER */}
+                {/* 🎙️ FEATURE 1: ACCURATE AUDIO VOICE MEMO LEDGER */}
                 <div style={{ background: '#FFF', padding: '16px', borderRadius: '12px', border: '2px dashed #2A9D8F' }}>
                   <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', color: '#1E293B', display:'flex', alignItems:'center', gap:'8px' }}><Mic size={18} color="#2A9D8F"/> {t.voiceTitle}</h3>
                   <p style={{margin: '0 0 12px 0', fontSize:'12px', color:'#64748B'}}>{t.voiceHelper}</p>
@@ -352,7 +331,19 @@ export default function App() {
                         <Square size={16} /> {t.stopRec}
                       </button>
                     )}
-                    {isRecording && <span style={{color:'#DC3545', fontSize:'13px', fontWeight:'bold'}}>🔴 ሪኮርድ ይገብር ኣሎ (Listening...)</span>}
+                    {isRecording && <span style={{color:'#DC3545', fontSize:'13px', fontWeight:'bold'}}>🔴 ሪኮርድ ይገብር ኣሎ...</span>}
+                  </div>
+
+                  {/* VOICE MEMOS PLAYBACK LIST */}
+                  <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {activeVoiceNotes.map(v => (
+                      <div key={v.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#F1F5F9', padding: '8px 12px', borderRadius: '6px' }}>
+                        <span style={{ fontSize: '12px', color: '#475569' }}>🎙️ Voice Memo ({v.time})</span>
+                        <button onClick={() => playAudioNote(v.audioData)} style={{ background: '#1E293B', color: '#FFF', border: 'none', padding: '6px 12px', borderRadius: '4px', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Play size={12} /> ስማዕ (Play)
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
@@ -361,7 +352,7 @@ export default function App() {
                   <Share2 size={18} /> {t.shareWhatsApp}
                 </button>
 
-                {/* MANUAL SALE FORM */}
+                {/* MANUAL SALE FORM WITH QUICK SMART BUTTONS */}
                 <div style={{ background: '#FFF', padding: '16px', borderRadius: '12px' }}>
                   <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'12px'}}>
                     <h3 style={{ margin: 0, fontSize: '16px' }}>{t.addSale}</h3>
@@ -369,6 +360,7 @@ export default function App() {
                       <Camera size={16} /> {t.scanBarcode}
                     </button>
                   </div>
+
                   <form onSubmit={(e) => { e.preventDefault(); executeSaleAutomation(saleItemName, parseInt(saleQty)); }} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <select value={saleItemName} onChange={(e) => setSaleItemName(e.target.value)} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #CBD5E1' }} required>
                       <option value="">{t.selectItem}</option>
@@ -389,7 +381,7 @@ export default function App() {
                   </form>
                 </div>
 
-                {/* 🤝 FEATURE 3: DEBT COLLECTOR LEDGER & WHATSAPP REMINDER */}
+                {/* 🤝 FEATURE 3: DEBT COLLECTOR LEDGER */}
                 <div style={{ background: '#FFF', padding: '16px', borderRadius: '12px', border: '2px solid #E76F51' }}>
                   <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', color: '#E76F51' }}>{t.debtTitle}</h3>
                   <form onSubmit={handleAddDebt} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
