@@ -189,7 +189,7 @@ export default function App() {
 
           setVoiceNotes(prev => [newVoiceNote, ...prev]);
 
-          if (predictedText.includes("ሽያጭ") && inventory.length > 0) {
+          if (predictedText.includes("ሽያጥ") && inventory.length > 0) {
             executeSaleAutomation(inventory[0].name, 1);
           } else if (predictedText.includes("ወጻኢ")) {
             setExpenses(prev => [{ id: Date.now().toString(), title: "ብድምጺ ዝኣተወ ወጻኢ", amount: 5000, date: selectedDate }, ...prev]);
