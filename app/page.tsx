@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { db, Transaction, Product } from '@/lib/db';
+import { db, Transaction, Product } from '../lib/db';
 
 // 1. Multi-Language Dictionary Engine
 const translations = {
