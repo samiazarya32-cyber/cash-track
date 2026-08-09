@@ -3,11 +3,11 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Cash Track - Smart Business Assistant',
-  icons: {
-    icon: '/favicon.ico', //
   description: 'Offline-first Accounting App for Small Businesses',
   manifest: '/manifest.json',
-  themeColor: '#003366',
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
