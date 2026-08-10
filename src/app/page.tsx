@@ -18,6 +18,7 @@ import {
   Building2,
   Plus,
   Check,
+  Sparkles,
 } from "lucide-react";
 
 // --- TYPES & ROLES ---
@@ -51,11 +52,13 @@ export default function SmartBizApp() {
   // Demo IDs (ደሓር ካብ Supabase Auth ዝመጹ)
   const userId = "owner-uuid-123";
   const businessId = "business-uuid-456";
-  // ናይ Payment Modal መርኣዪ State
+
+  // PAYMENT MODAL STATE
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
-  // AI Guardrail Hook
+  // AI GUARDRAIL HOOK
   const { triggerAudit, loading, auditResult, errorMsg } = useAIAudit(userId, businessId);
+
   // --- GLOBAL STATES ---
   const [currentRole, setCurrentRole] = useState<Role>("OWNER");
   const [businessType, setBusinessType] = useState<BusinessType>("Mini-Market");
@@ -171,6 +174,24 @@ export default function SmartBizApp() {
           })}
         </nav>
 
+        {/* Upgrade Banner for Owner */}
+        {currentRole === "OWNER" && (
+          <div className="mb-4 p-3 bg-gradient-to-r from-blue-950 to-slate-900 border border-blue-800/50 rounded-2xl">
+            <p className="text-xs text-blue-300 font-semibold flex items-center gap-1 mb-1">
+              <Sparkles className="w-3.5 h-3.5 text-blue-400" /> SmartBiz PRO
+            </p>
+            <p className="text-[11px] text-slate-400 mb-2">
+              Unrestricted AI Audits & Multi-user Controls.
+            </p>
+            <button
+              onClick={() => setShowPaymentModal(true)}
+              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-2 rounded-xl transition-all"
+            >
+              Upgrade Now
+            </button>
+          </div>
+        )}
+
         {/* Role Switcher */}
         <div className="pt-4 border-t border-slate-800">
           <label className="text-xs text-slate-500 mb-2 block font-semibold uppercase">
@@ -209,6 +230,12 @@ export default function SmartBizApp() {
           </div>
 
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowPaymentModal(true)}
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-emerald-950 text-emerald-400 border border-emerald-800/60 rounded-full text-xs font-bold hover:bg-emerald-900 transition-colors"
+            >
+              <Sparkles className="w-3.5 h-3.5" /> Activate PRO
+            </button>
             <span className="px-3 py-1 bg-blue-950 text-blue-400 border border-blue-800 rounded-full text-xs font-semibold">
               Role: {currentRole}
             </span>
@@ -368,59 +395,64 @@ export default function SmartBizApp() {
           )}
 
           {/* 2. DEEP AI AUDIT TAB (OWNER ONLY) */}
-          
           {activeTab === "audit" && (
-           <div className="space-y-6">
-           {currentRole === "OWNER" ? (
-             <div className="bg-slate-950 p-6 rounded-2xl border border-blue-900/40">
-             <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-               <Brain className="w-6 h-6 text-blue-400" />
-                <h2 className="text-lg font-bold">Deep AI Financial Audit & Advisory</h2>
-          </div>
+            <div className="space-y-6">
+              {currentRole === "OWNER" ? (
+                <div className="bg-slate-950 p-6 rounded-2xl border border-blue-900/40">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                      <Brain className="w-6 h-6 text-blue-400" />
+                      <h2 className="text-lg font-bold">Deep AI Financial Audit & Advisory</h2>
+                    </div>
 
-          {/* AI TRIGGER BUTTON */}
-          <button
-            onClick={triggerAudit}
-            disabled={loading}
-            className="bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 text-white font-semibold text-sm px-4 py-2 rounded-xl transition-colors flex items-center gap-2"
-          >
-            {loading ? "AI ኦዲት የካይድ ኣሎ..." : "Run New AI Audit"}
-          </button>
-        </div>
+                    {/* AI TRIGGER BUTTON */}
+                    <button
+                      onClick={triggerAudit}
+                      disabled={loading}
+                      className="bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 text-white font-semibold text-sm px-4 py-2 rounded-xl transition-colors flex items-center gap-2"
+                    >
+                      {loading ? "AI ኦዲት የካይድ ኣሎ..." : "Run New AI Audit"}
+                    </button>
+                  </div>
 
-        {/* COST LIMIT ERROR MESSAGE */}
-        {errorMsg && (
-          <div className="mb-4 p-4 bg-rose-950/80 border border-rose-800 text-rose-200 rounded-xl text-sm">
-            {errorMsg}
-          </div>
-        )}
+                  {/* COST LIMIT ERROR MESSAGE WITH PRO UPGRADE TRIGGER */}
+                  {errorMsg && (
+                    <div className="mb-4 p-4 bg-rose-950/80 border border-rose-800 text-rose-200 rounded-xl text-sm flex items-center justify-between gap-4">
+                      <span>{errorMsg}</span>
+                      <button
+                        onClick={() => setShowPaymentModal(true)}
+                        className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-lg text-xs whitespace-nowrap"
+                      >
+                        Upgrade to PRO
+                      </button>
+                    </div>
+                  )}
 
-        {/* AI AUDIT RESULT */}
-        {auditResult ? (
-          <div className="p-4 bg-blue-950/20 border border-blue-800/30 rounded-xl space-y-3 text-slate-200 text-sm leading-relaxed">
-            <p className="font-semibold text-blue-400">💡 ናይ AI ኦዲት ጸብጻብ (ትግርኛ):</p>
-            <p>{auditResult}</p>
-          </div>
-        ) : (
-          !errorMsg && (
-            <p className="text-slate-400 text-sm">
-              "Run New AI Audit" ዝብል ጠዉቕ እሞ ናይዚ ወርሒ ናይ መክሰብን ወጻኢን AI ትንተና ርአ።
-            </p>
-          )
-        )}
-      </div>
-    ) : (
-      <div className="bg-slate-950 p-8 rounded-2xl border border-slate-800 text-center">
-        <Lock className="w-10 h-10 text-rose-500 mx-auto mb-3" />
-        <h3 className="font-bold text-lg text-slate-200">Restricted Access</h3>
-        <p className="text-sm text-slate-400 mt-1">
-          ናይ AI ኦዲት ገጽ ን Owner ጥራይ ዝተፈቐደ እዩ።
-        </p>
-      </div>
-    )}
-  </div>
-)}   
+                  {/* AI AUDIT RESULT */}
+                  {auditResult ? (
+                    <div className="p-4 bg-blue-950/20 border border-blue-800/30 rounded-xl space-y-3 text-slate-200 text-sm leading-relaxed">
+                      <p className="font-semibold text-blue-400">💡 ናይ AI ኦዲት ጸብጻብ (ትግርኛ):</p>
+                      <p>{auditResult}</p>
+                    </div>
+                  ) : (
+                    !errorMsg && (
+                      <p className="text-slate-400 text-sm">
+                        "Run New AI Audit" ዝብል ጠዉቕ እሞ ናይዚ ወርሒ ናይ መክሰብን ወጻኢን AI ትንተና ርአ።
+                      </p>
+                    )
+                  )}
+                </div>
+              ) : (
+                <div className="bg-slate-950 p-8 rounded-2xl border border-slate-800 text-center">
+                  <Lock className="w-10 h-10 text-rose-500 mx-auto mb-3" />
+                  <h3 className="font-bold text-lg text-slate-200">Restricted Access</h3>
+                  <p className="text-sm text-slate-400 mt-1">
+                    ናይ AI ኦዲት ገጽ ን Owner ጥራይ ዝተፈቐደ እዩ።
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* 3. WHATSAPP & DEBT TRACKER */}
           {activeTab === "debt" && (
@@ -447,6 +479,14 @@ export default function SmartBizApp() {
           )}
         </main>
       </div>
+
+      {/* MOBILE MONEY PAYMENT MODAL */}
+      {showPaymentModal && (
+        <PaymentModal
+          userId={userId}
+          onClose={() => setShowPaymentModal(false)}
+        />
+      )}
     </div>
   );
 }
