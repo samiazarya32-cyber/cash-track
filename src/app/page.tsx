@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useAIAudit } from "@/hooks/useAIAudit";
 import {
   Home,
   ArrowDownCircle,
@@ -46,6 +47,12 @@ interface Transaction {
 }
 
 export default function SmartBizApp() {
+  // Demo IDs (ደሓር ካብ Supabase Auth ዝመጹ)
+  const userId = "owner-uuid-123";
+  const businessId = "business-uuid-456";
+
+  // AI Guardrail Hook
+  const { triggerAudit, loading, auditResult, errorMsg } = useAIAudit(userId, businessId);
   // --- GLOBAL STATES ---
   const [currentRole, setCurrentRole] = useState<Role>("OWNER");
   const [businessType, setBusinessType] = useState<BusinessType>("Mini-Market");
@@ -358,34 +365,59 @@ export default function SmartBizApp() {
           )}
 
           {/* 2. DEEP AI AUDIT TAB (OWNER ONLY) */}
+          
           {activeTab === "audit" && (
-            <div className="space-y-6">
-              {currentRole === "OWNER" ? (
-                <div className="bg-slate-950 p-6 rounded-2xl border border-blue-900/40">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Brain className="w-6 h-6 text-blue-400" />
-                    <h2 className="text-lg font-bold">Deep AI Financial Audit & Leakage Advisory</h2>
-                  </div>
-                  <div className="p-4 bg-blue-950/20 border border-blue-800/30 rounded-xl space-y-3">
-                    <p className="text-sm text-slate-200 leading-relaxed">
-                      💡 <strong>ናይ AI ጸብጻብ (ትግርኛ):</strong> ኣብዚ ሰሙን እዚ ናይ መሸጣ መጠንካ ብ <strong>18%</strong> ወሲኹ ኣሎ። ነገር ግን ናይ መጥቀሚታት ወጻኢኻ ካብቲ ልሙድ ናይ ወርሒ ኣቨረጅ ብ 25% ስለ ዝወሰኸ፡ ነቲ መክሰብካ የንህሶ ኣሎ።
-                    </p>
-                    <p className="text-sm text-slate-300">
-                      ⚠️ <strong>ምኽሪ:</strong> ንዋይ "Item B" ዝበሃል ኣብ ውሽጢ 2 መዓልቲ ክውዳእ እዩ፣ ሎሚ Re-order እንተገቢርካ ናይ መሸጣ ዕድልካ ኣይተቋርጽን።
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="bg-slate-950 p-8 rounded-2xl border border-slate-800 text-center">
-                  <Lock className="w-10 h-10 text-rose-500 mx-auto mb-3" />
-                  <h3 className="font-bold text-lg text-slate-200">Restricted Access</h3>
-                  <p className="text-sm text-slate-400 mt-1">
-                    ናይ AI ኦዲት ገጽ ን Owner ጥራይ ዝተፈቐደ እዩ።
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
+           <div className="space-y-6">
+           {currentRole === "OWNER" ? (
+             <div className="bg-slate-950 p-6 rounded-2xl border border-blue-900/40">
+             <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+               <Brain className="w-6 h-6 text-blue-400" />
+                <h2 className="text-lg font-bold">Deep AI Financial Audit & Advisory</h2>
+          </div>
+
+          {/* AI TRIGGER BUTTON */}
+          <button
+            onClick={triggerAudit}
+            disabled={loading}
+            className="bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 text-white font-semibold text-sm px-4 py-2 rounded-xl transition-colors flex items-center gap-2"
+          >
+            {loading ? "AI ኦዲት የካይድ ኣሎ..." : "Run New AI Audit"}
+          </button>
+        </div>
+
+        {/* COST LIMIT ERROR MESSAGE */}
+        {errorMsg && (
+          <div className="mb-4 p-4 bg-rose-950/80 border border-rose-800 text-rose-200 rounded-xl text-sm">
+            {errorMsg}
+          </div>
+        )}
+
+        {/* AI AUDIT RESULT */}
+        {auditResult ? (
+          <div className="p-4 bg-blue-950/20 border border-blue-800/30 rounded-xl space-y-3 text-slate-200 text-sm leading-relaxed">
+            <p className="font-semibold text-blue-400">💡 ናይ AI ኦዲት ጸብጻብ (ትግርኛ):</p>
+            <p>{auditResult}</p>
+          </div>
+        ) : (
+          !errorMsg && (
+            <p className="text-slate-400 text-sm">
+              "Run New AI Audit" ዝብል ጠዉቕ እሞ ናይዚ ወርሒ ናይ መክሰብን ወጻኢን AI ትንተና ርአ።
+            </p>
+          )
+        )}
+      </div>
+    ) : (
+      <div className="bg-slate-950 p-8 rounded-2xl border border-slate-800 text-center">
+        <Lock className="w-10 h-10 text-rose-500 mx-auto mb-3" />
+        <h3 className="font-bold text-lg text-slate-200">Restricted Access</h3>
+        <p className="text-sm text-slate-400 mt-1">
+          ናይ AI ኦዲት ገጽ ን Owner ጥራይ ዝተፈቐደ እዩ።
+        </p>
+      </div>
+    )}
+  </div>
+)}   
 
           {/* 3. WHATSAPP & DEBT TRACKER */}
           {activeTab === "debt" && (
