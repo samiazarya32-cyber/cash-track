@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useAIAudit } from "@/hooks/useAIAudit";
+import PaymentModal from "@/components/PaymentModal";
 import {
   Home,
   ArrowDownCircle,
@@ -50,6 +51,8 @@ export default function SmartBizApp() {
   // Demo IDs (ደሓር ካብ Supabase Auth ዝመጹ)
   const userId = "owner-uuid-123";
   const businessId = "business-uuid-456";
+  // ናይ Payment Modal መርኣዪ State
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   // AI Guardrail Hook
   const { triggerAudit, loading, auditResult, errorMsg } = useAIAudit(userId, businessId);
