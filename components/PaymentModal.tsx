@@ -165,6 +165,13 @@ export default function PaymentModal({
               {isSubmitting ? "የረጋግፅ ኣሎ..." : "ክፍሊት ኣረጋግጽ (Activate PRO)"}
               <ArrowRight className="w-4 h-4" />
             </button>
+            {/* 3. ኣብዚ ኣብ መወዳእታ ገጽ PAYMENT MODAL */}
+      {showPaymentModal && (
+        <PaymentModal
+          userId={userId}
+          onClose={() => setShowPaymentModal(false)}
+        />
+      )}
           </div>
         )}
 
