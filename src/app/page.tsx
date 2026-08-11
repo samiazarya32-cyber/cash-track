@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useAIAudit } from "@/hooks/useAIAudit";
 import PaymentModal from "@/components/PaymentModal";
+import InstallPWA from "@/components/InstallPWA";
 import {
   Home,
   ArrowDownCircle,
@@ -278,14 +279,14 @@ export default function SmartBizApp() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <input
                     type="number"
-                    placeholder="መጠናን (Amount UGX)"
+                    placeholder="መጠን (Amount UGX)"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     className="bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm focus:outline-none focus:border-blue-500"
                   />
                   <input
                     type="text"
-                    placeholder="መብራህረሂ (Note)"
+                    placeholder="መግለጺ (Note)"
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
                     className="bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm focus:outline-none focus:border-blue-500"
