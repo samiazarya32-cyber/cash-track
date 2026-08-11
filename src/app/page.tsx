@@ -21,7 +21,42 @@ import {
   Check,
   Sparkles,
 } from "lucide-react";
+{/* TOP TASKBAR */}
+<header className="h-16 border-b border-slate-800 bg-slate-950/50 backdrop-blur px-6 flex items-center justify-between">
+  <div className="flex items-center gap-4">
+    <span className="text-sm text-slate-400">ዓይነት ንግዲ:</span>
+    <select
+      value={businessType}
+      onChange={(e) => setBusinessType(e.target.value as BusinessType)}
+      className="bg-slate-900 border border-slate-800 rounded-lg px-3 py-1 text-sm text-blue-400 font-semibold focus:outline-none"
+    >
+      <option value="Mini-Market">Mini-Market / ሱቕ</option>
+      <option value="Salon">Salon / ሳሎን</option>
+      <option value="Bar & Restaurant">Bar & Restaurant</option>
+      <option value="Pharmacy">Pharmacy / ፋርማሲ</option>
+      <option value="Boutique">Boutique / ክዳውንቲ</option>
+      <option value="Hardware">Hardware / ሃርድዌር</option>
+    </select>
+  </div>
 
+  {/* RIGHT SIDE BUTTONS (PWA Install + PRO Button + Role) */}
+  <div className="flex items-center gap-3">
+    
+    {/* 👈 እዚኣ እያ እታ ሓዳሽ PWA Install Button! */}
+    <InstallPWA />
+
+    <button
+      onClick={() => setShowPaymentModal(true)}
+      className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-emerald-950 text-emerald-400 border border-emerald-800/60 rounded-full text-xs font-bold hover:bg-emerald-900 transition-colors"
+    >
+      <Sparkles className="w-3.5 h-3.5" /> Activate PRO
+    </button>
+    
+    <span className="px-3 py-1 bg-blue-950 text-blue-400 border border-blue-800 rounded-full text-xs font-semibold">
+      Role: {currentRole}
+    </span>
+  </div>
+</header>
 // --- TYPES & ROLES ---
 type Role = "OWNER" | "MANAGER" | "CASHIER";
 
